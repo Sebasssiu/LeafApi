@@ -92,10 +92,10 @@ WSGI_APPLICATION = 'leaf.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'umrpjjsm',
-        'USER': 'umrpjjsm',
-        'PASSWORD': '3OXGer0dSBECRyiFrNBBuUsWyMyp_nwN',
-        'HOST': 'ziggy.db.elephantsql.com',
+        'NAME': 'dd80p9uvquhk86',
+        'USER': 'zepqqvzizmbmte',
+        'PASSWORD': 'b9f1a4dad1057800f8a8e17c21a94f6d49c056f377c6f90574d65b608672fe58',
+        'HOST': 'ec2-50-19-176-236.compute-1.amazonaws.com',
         'POST': '5432'
     }
 }
