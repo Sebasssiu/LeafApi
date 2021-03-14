@@ -1,1 +1,1 @@
-web:gunicorn leaf.wsgi
+web: gunicorn leaf.wsgi
