@@ -25,7 +25,7 @@ SECRET_KEY = 'q$8a4#%zvr@*6s$8if^%v_l%^oql#4y4^bflg)hqo4!ifk34h#'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['leaf-musicapp.herokuapp.com']
 
 
 # Application definition
