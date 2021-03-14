@@ -62,7 +62,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    'http://192,168.0.20:19006'
+    'localhost:3000'
 ]
 
 ROOT_URLCONF = 'leaf.urls'
