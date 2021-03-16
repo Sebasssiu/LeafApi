@@ -1,11 +1,12 @@
 from django.db import models
+
+# Create your models here.
+
 from django.contrib.auth.models import AbstractUser
 
 
-class Users(models.Model):
-    username = models.CharField(max_length=32, primary_key=True, blank=False)
-    artist_name = models.CharField(max_length=32, blank=True)
-    password = models.CharField(max_length=50, blank=False)
+class Users(AbstractUser):
+    artist_name = models.CharField(max_length=32, blank=True, default='')
     is_artist = models.BooleanField(default=False, blank=False)
     is_admin = models.BooleanField(default=False, blank=False)
     is_staff = models.BooleanField(default=False, blank=False)

@@ -14,11 +14,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
-class UsersViewSet(viewsets.ModelViewSet):
-    queryset = Users.objects.all()
-    serializer_class = UsersSerializer
-
-
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
     serializer_class = PremiumSerializer
