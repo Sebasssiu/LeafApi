@@ -40,4 +40,5 @@ class Song(models.Model):
     is_active = models.BooleanField(default=False)
     user = models.ForeignKey('Users', on_delete=models.CASCADE)
     listen = models.ForeignKey('Listen', on_delete=models.CASCADE)
+    link = models.CharField(max_length=32, blank=False, default="null")
 
