@@ -28,19 +28,19 @@ class AlbumSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'artist_id', 'release_date', 'user')
 
 
+class SongSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Song
+        fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'listen')
+
 class GenreSerializer(serializers.ModelSerializer):
+    songs = SongSerializer(many=True)
     class Meta:
         model = Genre
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'songs')
 
 
 class ListenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Listen
         fields = ('id', 'listener', 'date')
-
-
-class SongSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Song
-        fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'listen')

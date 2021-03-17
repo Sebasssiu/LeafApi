@@ -35,7 +35,7 @@ class Listen(models.Model):
 
 class Song(models.Model):
     name = models.CharField(max_length=32, blank=False)
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name='songs')
     album_id = models.ForeignKey(Album, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=False)
     user = models.ForeignKey('Users', on_delete=models.CASCADE)
