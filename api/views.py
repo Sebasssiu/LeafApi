@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from .models import *
 from .serializers import *
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -19,6 +20,8 @@ class UserViewSet(viewsets.ModelViewSet):
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
     serializer_class = PremiumSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name']
 
 
 class AlbumViewSet(viewsets.ModelViewSet):
@@ -29,6 +32,8 @@ class AlbumViewSet(viewsets.ModelViewSet):
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name']
 
 
 class ListenViewSet(viewsets.ModelViewSet):
@@ -39,6 +44,8 @@ class ListenViewSet(viewsets.ModelViewSet):
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name']
 
     @action(detail=True, methods=['GET'])
     def song_info(self, request, pk=None):
