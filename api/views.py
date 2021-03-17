@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets, status
+from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import AllowAny
 # Create your views here.
@@ -7,6 +8,7 @@ from .serializers import *
 from django.contrib.auth.models import User
 from .models import *
 from .serializers import *
+from rest_framework.decorators import action
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -37,4 +39,11 @@ class ListenViewSet(viewsets.ModelViewSet):
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
+
+    @action(detail=True, methods=['GET'])
+    def song_info(self, request, pk=None):
+        song = Song.objects.get(id=pk)
+        song_name = song.name
+        response = {'Song requested': song_name}
+        return Response(response, status=status.HTTP_200_OK)
 

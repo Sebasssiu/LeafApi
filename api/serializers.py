@@ -4,6 +4,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -19,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 class PremiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Premium
-        fields = ('suscription', 'User')
+        fields = ('suscription_date', 'User')
 
 
 class AlbumSerializer(serializers.ModelSerializer):
@@ -32,6 +33,7 @@ class SongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'listen', 'link')
+
 
 class GenreSerializer(serializers.ModelSerializer):
     songs = SongSerializer(many=True)
