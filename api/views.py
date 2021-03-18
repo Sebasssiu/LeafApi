@@ -14,10 +14,16 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     @action(detail=False, methods=['POST'])
-    def ispremium(self, request):
+    def userData(self, request):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
-        return Response(user.is_staff, status=status.HTTP_200_OK)
+        response = {
+            'username': user.username,
+            'isPremium': user.is_staff,
+            'isArtist': user.is_artist,
+            'isAdmin': user.is_admin
+        }
+        return Response(response, status=status.HTTP_200_OK)
 
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
