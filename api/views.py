@@ -1,7 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .serializers import *
-from rest_framework.decorators import action
+from django.db.models import Count
+from datetime import datetime
 from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
@@ -54,4 +55,18 @@ class SongViewSet(viewsets.ModelViewSet):
         song_name = song.name
         response = {'Song requested': song_name}
         return Response(response, status=status.HTTP_200_OK)
-
+    @action(detail=False, methods=['POST'])
+    def validation(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        if user.is_staff:
+            return Response('Successfull', status=status.HTTP_200_OK)
+        else:
+            if request.data['song'] != "":
+                count = Listen.objects.filter(date=datetime.today().strftime('%Y-%m-%d'), user=user.id)
+                if len(count) < 3:
+                    song = Song.objects.get(id=request.data['song'])
+                    Listen.objects.create(user=user, song=song, date=datetime.today().strftime('%Y-%m-%d'))
+                    return Response('Successfull', status=status.HTTP_200_OK)
+                else:
+                    return Response({'error': 'ERROR'}, status=status.HTTP_200_OK)
