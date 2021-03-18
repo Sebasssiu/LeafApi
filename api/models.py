@@ -28,17 +28,16 @@ class Genre(models.Model):
     name = models.CharField(max_length=32, blank=False)
 
 
-class Listen(models.Model):
-    listener = models.ManyToManyField('Users', through="Song")
-    date = models.DateField(blank=False)
-
-
 class Song(models.Model):
     name = models.CharField(max_length=32, blank=False)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name='songs')
     album_id = models.ForeignKey(Album, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=False)
     user = models.ForeignKey('Users', on_delete=models.CASCADE)
-    listen = models.ForeignKey('Listen', on_delete=models.CASCADE)
     link = models.CharField(max_length=300, blank=False, default="null")
 
+
+class Listen(models.Model):
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+    date = models.DateField(blank=False)

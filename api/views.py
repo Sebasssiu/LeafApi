@@ -1,21 +1,22 @@
-from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import AllowAny
-# Create your views here.
-from .serializers import *
-from django.contrib.auth.models import User
-from .models import *
 from .serializers import *
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
+from rest_framework.decorators import action
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-
+    @action(detail=False, methods=['POST'])
+    def ispremium(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        return Response(user.is_staff, status=status.HTTP_200_OK)
 
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
