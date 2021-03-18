@@ -60,13 +60,13 @@ class SongViewSet(viewsets.ModelViewSet):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
         if user.is_staff:
-            return Response('Successfull', status=status.HTTP_200_OK)
+            return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
         else:
             if request.data['song'] != "":
                 count = Listen.objects.filter(date=datetime.today().strftime('%Y-%m-%d'), user=user.id)
                 if len(count) < 3:
                     song = Song.objects.get(id=request.data['song'])
                     Listen.objects.create(user=user, song=song, date=datetime.today().strftime('%Y-%m-%d'))
-                    return Response('Successfull', status=status.HTTP_200_OK)
+                    return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'error': 'ERROR'}, status=status.HTTP_200_OK)
