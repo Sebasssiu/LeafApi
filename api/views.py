@@ -30,8 +30,14 @@ class PremiumViewSet(viewsets.ModelViewSet):
     serializer_class = PremiumSerializer
     filter_backends = [SearchFilter]
     search_fields = ['name']
-
-
+    @action(detail=False, methods=['POST'])
+    def premiumPay(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        user.is_staff = True
+        user.save()
+        Premium.objects.create(User=user, suscription_date=datetime.today().strftime('%Y-%m-%d'))
+        return Response({'response': 'Successfull'}, status=status.HTTP_200_OK)
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
