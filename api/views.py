@@ -25,6 +25,13 @@ class UserViewSet(viewsets.ModelViewSet):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['POST'])
+    def becomeArtist(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        user.is_artist = True
+        user.save()
+        return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
     serializer_class = PremiumSerializer
