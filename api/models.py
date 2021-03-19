@@ -41,3 +41,12 @@ class Listen(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     date = models.DateField(blank=False)
+
+
+class PlayList(models.Model):
+    owner = models.ForeignKey(Users, on_delete=models.CASCADE, blank=False)
+    name = models.CharField(max_length=30, blank=False)
+    songs = models.ManyToManyField(Song)
+
+
+

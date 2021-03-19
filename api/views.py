@@ -45,6 +45,8 @@ class PremiumViewSet(viewsets.ModelViewSet):
         user.save()
         Premium.objects.create(User=user, suscription_date=datetime.today().strftime('%Y-%m-%d'))
         return Response({'response': 'Successfull'}, status=status.HTTP_200_OK)
+
+
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
@@ -89,3 +91,10 @@ class SongViewSet(viewsets.ModelViewSet):
                     return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
                 else:
                     return Response({'error': 'ERROR'}, status=status.HTTP_200_OK)
+
+
+class PlayListViewSet(viewsets.ModelViewSet):
+    queryset = PlayList.objects.all()
+    serializer_class = PlayListSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['owner__id']

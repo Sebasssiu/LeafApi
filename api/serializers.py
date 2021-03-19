@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import *
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
@@ -16,12 +17,22 @@ class UserSerializer(serializers.ModelSerializer):
         Token.objects.create(user=user)
         return user
 
+
 class PremiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Premium
         fields = ('suscription_date', 'User')
 
+
+class PlayListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlayList
+        fields = ('id', 'owner', 'name', 'songs')
+
+
 class SongSerializer(serializers.ModelSerializer):
+    # playlists = PlayListSerializer(many=True)
+
     class Meta:
         model = Song
         fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
@@ -29,12 +40,15 @@ class SongSerializer(serializers.ModelSerializer):
 
 class AlbumSerializer(serializers.ModelSerializer):
     almbum_songs = SongSerializer(many=True)
+
     class Meta:
         model = Album
         fields = ('id', 'name', 'artist_id', 'release_date', 'user', 'almbum_songs')
 
+
 class GenreSerializer(serializers.ModelSerializer):
     songs = SongSerializer(many=True)
+
     class Meta:
         model = Genre
         fields = ('id', 'name', 'songs')
