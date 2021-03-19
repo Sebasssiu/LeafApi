@@ -31,7 +31,7 @@ class Genre(models.Model):
 class Song(models.Model):
     name = models.CharField(max_length=32, blank=False)
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name='songs')
-    album_id = models.ForeignKey(Album, on_delete=models.CASCADE)
+    album_id = models.ForeignKey(Album, on_delete=models.CASCADE, related_name='almbum_songs')
     is_active = models.BooleanField(default=False)
     user = models.ForeignKey('Users', on_delete=models.CASCADE)
     link = models.CharField(max_length=300, blank=False, default="null")

@@ -16,24 +16,22 @@ class UserSerializer(serializers.ModelSerializer):
         Token.objects.create(user=user)
         return user
 
-
 class PremiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Premium
         fields = ('suscription_date', 'User')
-
-
-class AlbumSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Album
-        fields = ('id', 'name', 'artist_id', 'release_date', 'user')
-
 
 class SongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
 
+
+class AlbumSerializer(serializers.ModelSerializer):
+    almbum_songs = SongSerializer(many=True)
+    class Meta:
+        model = Album
+        fields = ('id', 'name', 'artist_id', 'release_date', 'user', 'almbum_songs')
 
 class GenreSerializer(serializers.ModelSerializer):
     songs = SongSerializer(many=True)
