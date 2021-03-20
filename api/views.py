@@ -55,7 +55,22 @@ class PremiumViewSet(viewsets.ModelViewSet):
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
-
+    @action(detail=False, methods=['POST'])
+    def update(self, request):
+      if(request.data['delete']):
+        Song.objects.destroy(id=request.data['song_id'])
+      else:
+        album = Album.objects.get(id=request.data['id'])
+        album.name = request.data['album']
+        album.save()
+        song = Song.objects.get(id=request.data['song_id'])
+        song.name = request.data['song']
+        song.is_active = request.data['isSong']
+        song.save()
+        user = User.objects.get(id=request.data['artist_id'])
+        user.artist_name = request.data['artist']
+        user.save()
+      return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
