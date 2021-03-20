@@ -17,7 +17,6 @@ class UserSerializer(serializers.ModelSerializer):
         Token.objects.create(user=user)
         return user
 
-
 class PremiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Premium
@@ -31,8 +30,6 @@ class PlayListSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
-    # playlists = PlayListSerializer(many=True)
-
     class Meta:
         model = Song
         fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
@@ -40,7 +37,6 @@ class SongSerializer(serializers.ModelSerializer):
 
 class AlbumSerializer(serializers.ModelSerializer):
     almbum_songs = SongSerializer(many=True)
-
     class Meta:
         model = Album
         fields = ('id', 'name', 'artist_id', 'release_date', 'user', 'almbum_songs')
@@ -48,7 +44,6 @@ class AlbumSerializer(serializers.ModelSerializer):
 
 class GenreSerializer(serializers.ModelSerializer):
     songs = SongSerializer(many=True)
-
     class Meta:
         model = Genre
         fields = ('id', 'name', 'songs')

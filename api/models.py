@@ -24,7 +24,6 @@ class Album(models.Model):
     release_date = models.DateField(blank=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-
 class Genre(models.Model):
     name = models.CharField(max_length=32, blank=False)
 

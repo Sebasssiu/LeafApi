@@ -1,7 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .serializers import *
-from django.db.models import Count
 from datetime import datetime
 from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
@@ -32,6 +31,12 @@ class UserViewSet(viewsets.ModelViewSet):
         user.is_artist = True
         user.save()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+    @action(detail=False, methods=['POST'])
+    def artistid(self, request):
+      user = User.objects.get(id=request.data['id'])
+      return Response({'name': user.artist_name}, status=status.HTTP_200_OK)
+
+
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
     serializer_class = PremiumSerializer
