@@ -56,7 +56,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
     @action(detail=False, methods=['POST'])
-    def update(self, request):
+    def updatealbum(self, request):
       if(request.data['delete']):
         Song.objects.destroy(id=request.data['song_id'])
       else:
