@@ -23,16 +23,17 @@ class PremiumSerializer(serializers.ModelSerializer):
         fields = ('suscription_date', 'User')
 
 
+class SongSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Song
+    fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link', 'playlists')
+
+
 class PlayListSerializer(serializers.ModelSerializer):
+    songs = SongSerializer(many=True)
     class Meta:
         model = PlayList
         fields = ('id', 'owner', 'name', 'songs')
-
-
-class SongSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Song
-        fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
 
 
 class AlbumSerializer(serializers.ModelSerializer):

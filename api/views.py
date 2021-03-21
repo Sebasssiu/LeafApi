@@ -120,6 +120,12 @@ class SongViewSet(viewsets.ModelViewSet):
                 else:
                     return Response({'error': 'ERROR'}, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['POST'])
+    def addsong(self, request):
+      print(request.data['song_id'])
+      song = Song.objects.get(id=request.data['song_id'])
+      print(song.playlists)
+      return Response('successfull', status=status.HTTP_200_OK)
 
 class PlayListViewSet(viewsets.ModelViewSet):
     queryset = PlayList.objects.all()

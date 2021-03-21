@@ -27,6 +27,9 @@ class Album(models.Model):
 class Genre(models.Model):
     name = models.CharField(max_length=32, blank=False)
 
+class PlayList(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
+    name = models.CharField(max_length=30, blank=False)
 
 class Song(models.Model):
     name = models.CharField(max_length=32, blank=False)
@@ -35,18 +38,11 @@ class Song(models.Model):
     is_active = models.BooleanField(default=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     link = models.CharField(max_length=300, blank=False, default="null")
-
+    playlists = models.ManyToManyField(PlayList, related_name='songs')
 
 class Listen(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     date = models.DateField(blank=False)
-
-
-class PlayList(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
-    name = models.CharField(max_length=30, blank=False)
-    songs = models.ManyToManyField(Song)
-
 
 
