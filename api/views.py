@@ -2,6 +2,8 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .serializers import *
 from datetime import datetime
+from django.core import serializers
+from django.http import HttpResponse
 from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
@@ -28,9 +30,11 @@ class UserViewSet(viewsets.ModelViewSet):
     def becomeArtist(self, request):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
-        user.is_artist = True
+        user.is_artist = request.data['isArtist']
+        user.artist_name = request.data['artist_name']
         user.save()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['POST'])
     def artistid(self, request):
       user = User.objects.get(id=request.data['id'])
@@ -118,3 +122,11 @@ class PlayListViewSet(viewsets.ModelViewSet):
     serializer_class = PlayListSerializer
     filter_backends = [SearchFilter]
     search_fields = ['owner__id']
+
+    @action(detail=False, methods=['POST'])
+    def userPlaylist(self, request):
+      token = Token.objects.get(key=request.data['token'])
+      user = User.objects.get(id=token.user_id)
+      playlist = list(PlayList.objects.filter(owner=user.id))
+      post_list = serializers.serialize('json', playlist)
+      return HttpResponse(post_list, content_type="text/json-comment-filtered")
