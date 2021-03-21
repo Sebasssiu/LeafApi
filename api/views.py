@@ -92,6 +92,14 @@ class AlbumViewSet(viewsets.ModelViewSet):
             user.save()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['POST'])
+    def useralbum(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        queryset = self.get_queryset().filter(user=user.id)
+        serializer = AlbumSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
