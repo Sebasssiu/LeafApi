@@ -48,8 +48,8 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
 
-    @action(detail=False, methods=['GET'])
-    def modfyUser(self, request):
+    @action(detail=False, methods=['POST'])
+    def modifyUser(self, request):
       if request.data['data']['delete']:
         User.objects.get(id=request.data['item']['id']).delete()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
