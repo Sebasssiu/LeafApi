@@ -8,12 +8,14 @@ from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
+
 User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
     @action(detail=False, methods=['POST'])
     def userData(self, request):
         token = Token.objects.get(key=request.data['token'])
@@ -37,20 +39,22 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def artistid(self, request):
-      user = User.objects.get(id=request.data['id'])
-      return Response({'name': user.artist_name}, status=status.HTTP_200_OK)
+        user = User.objects.get(id=request.data['id'])
+        return Response({'name': user.artist_name}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'])
     def artists(self, request):
-      queryset = self.get_queryset().filter(is_artist=True)
-      serializer = UserSerializer(queryset, many=True)
-      return Response(serializer.data)
+        queryset = self.get_queryset().filter(is_artist=True)
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
     serializer_class = PremiumSerializer
     filter_backends = [SearchFilter]
     search_fields = ['name']
+
     @action(detail=False, methods=['POST'])
     def premiumPay(self, request):
         token = Token.objects.get(key=request.data['token'])
@@ -64,28 +68,30 @@ class PremiumViewSet(viewsets.ModelViewSet):
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
+
     @action(detail=False, methods=['POST'])
     def updatealbum(self, request):
-      if request.data['delete'] == "song":
-        print("holaa")
-        Song.objects.get(id=request.data['song_id']).delete()
-        print("holaasssssssss")
-      elif request.data['delete'] == "artist":
-        User.objects.get(id=request.data['artist_id']).delete()
-      elif request.data['delete'] == "album":
-        Album.objects.get(id=request.data['id']).delete()
-      else:
-        album = Album.objects.get(id=request.data['id'])
-        album.name = request.data['album']
-        album.save()
-        song = Song.objects.get(id=request.data['song_id'])
-        song.name = request.data['song']
-        song.is_active = request.data['isSong']
-        song.save()
-        user = User.objects.get(id=request.data['artist_id'])
-        user.artist_name = request.data['artist']
-        user.save()
-      return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+        if request.data['delete'] == "song":
+            print("holaa")
+            Song.objects.get(id=request.data['song_id']).delete()
+            print("holaasssssssss")
+        elif request.data['delete'] == "artist":
+            User.objects.get(id=request.data['artist_id']).delete()
+        elif request.data['delete'] == "album":
+            Album.objects.get(id=request.data['id']).delete()
+        else:
+            album = Album.objects.get(id=request.data['id'])
+            album.name = request.data['album']
+            album.save()
+            song = Song.objects.get(id=request.data['song_id'])
+            song.name = request.data['song']
+            song.is_active = request.data['isSong']
+            song.save()
+            user = User.objects.get(id=request.data['artist_id'])
+            user.artist_name = request.data['artist']
+            user.save()
+        return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
@@ -111,6 +117,7 @@ class SongViewSet(viewsets.ModelViewSet):
         song_name = song.name
         response = {'Song requested': song_name}
         return Response(response, status=status.HTTP_200_OK)
+
     @action(detail=False, methods=['POST'])
     def validation(self, request):
         token = Token.objects.get(key=request.data['token'])
@@ -129,10 +136,11 @@ class SongViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def addsong(self, request):
-      print(request.data['song_id'])
-      song = Song.objects.get(id=request.data['song_id'])
-      print(song.playlists)
-      return Response('successfull', status=status.HTTP_200_OK)
+        print(request.data['song_id'])
+        song = Song.objects.get(id=request.data['song_id'])
+        print(song.playlists)
+        return Response('successfull', status=status.HTTP_200_OK)
+
 
 class PlayListViewSet(viewsets.ModelViewSet):
     queryset = PlayList.objects.all()
@@ -150,13 +158,10 @@ class PlayListViewSet(viewsets.ModelViewSet):
         response = {'message': 'playlist created'}
         return Response(response, status=status.HTTP_200_OK)
 
-
     @action(detail=False, methods=['POST'])
     def userPlaylist(self, request):
-      token = Token.objects.get(key=request.data['token'])
-      user = User.objects.get(id=token.user_id)
-      queryset = self.get_queryset().filter(owner=user.id)
-      serializer = PlayListSerializer(queryset, many=True)
-      #playlist = list(PlayList.objects.filter(owner=user.id))
-      #post_list = serializers.serialize('json', playlist)
-      return Response(serializer.data)
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        queryset = self.get_queryset().filter(owner=user.id)
+        serializer = PlayListSerializer(queryset, many=True)
+        return Response(serializer.data)
