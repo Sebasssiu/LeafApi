@@ -9,7 +9,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'password')
+        fields = ('id', 'username', 'artist_name', 'is_artist', 'is_admin', 'is_staff', 'password')
         extra_kwargs = {'password': {'write_only': True, 'required': True}}
 
     def create(self, validated_data):
@@ -26,7 +26,7 @@ class PremiumSerializer(serializers.ModelSerializer):
 class SongSerializer(serializers.ModelSerializer):
   class Meta:
     model = Song
-    fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link', 'playlists')
+    fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
 
 
 class PlayListSerializer(serializers.ModelSerializer):
