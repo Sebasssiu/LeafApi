@@ -40,6 +40,11 @@ class UserViewSet(viewsets.ModelViewSet):
       user = User.objects.get(id=request.data['id'])
       return Response({'name': user.artist_name}, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['GET'])
+    def artists(self, request):
+      queryset = self.get_queryset().filter(is_artist=True)
+      serializer = UserSerializer(queryset, many=True)
+      return Response(serializer.data)
 
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
