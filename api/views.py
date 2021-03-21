@@ -61,11 +61,13 @@ class AlbumViewSet(viewsets.ModelViewSet):
     serializer_class = AlbumSerializer
     @action(detail=False, methods=['POST'])
     def updatealbum(self, request):
-      if(request.data['delete'] == 'song'):
+      if request.data['delete'] == "song":
+        print("holaa")
         Song.objects.get(id=request.data['song_id']).delete()
-      if (request.data['delete'] == 'artist'):
+        print("holaasssssssss")
+      elif request.data['delete'] == "artist":
         User.objects.get(id=request.data['artist_id']).delete()
-      if (request.data['delete'] == 'album'):
+      elif request.data['delete'] == "album":
         Album.objects.get(id=request.data['id']).delete()
       else:
         album = Album.objects.get(id=request.data['id'])
