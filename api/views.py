@@ -139,6 +139,8 @@ class PlayListViewSet(viewsets.ModelViewSet):
     def userPlaylist(self, request):
       token = Token.objects.get(key=request.data['token'])
       user = User.objects.get(id=token.user_id)
-      playlist = list(PlayList.objects.filter(owner=user.id))
-      post_list = serializers.serialize('json', playlist)
-      return HttpResponse(post_list, content_type="text/json-comment-filtered")
+      queryset = self.get_queryset().filter(owner=user.id)
+      serializer = PlayListSerializer(queryset, many=True)
+      #playlist = list(PlayList.objects.filter(owner=user.id))
+      #post_list = serializers.serialize('json', playlist)
+      return Response(serializer.data)
