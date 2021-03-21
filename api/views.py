@@ -136,6 +136,17 @@ class PlayListViewSet(viewsets.ModelViewSet):
     search_fields = ['owner__id']
 
     @action(detail=False, methods=['POST'])
+    def createplaylist(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        pname = request.data['name']
+        print(pname)
+        PlayList.objects.create(owner=user, name=pname)
+        response = {'message': 'playlist created'}
+        return Response(response, status=status.HTTP_200_OK)
+
+
+    @action(detail=False, methods=['POST'])
     def userPlaylist(self, request):
       token = Token.objects.get(key=request.data['token'])
       user = User.objects.get(id=token.user_id)
