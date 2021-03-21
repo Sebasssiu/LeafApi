@@ -62,11 +62,11 @@ class AlbumViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def updatealbum(self, request):
       if(request.data['delete'] == 'song'):
-        Song.objects.destroy(id=request.data['song_id'])
+        Song.objects.get(id=request.data['song_id']).delete()
       if (request.data['delete'] == 'artist'):
-        User.objects.destroy(id=request.data['artist_id'])
+        User.objects.get(id=request.data['artist_id']).delete()
       if (request.data['delete'] == 'album'):
-        Album.objects.destroy(id=request.data['id'])
+        Album.objects.get(id=request.data['id']).delete()
       else:
         album = Album.objects.get(id=request.data['id'])
         album.name = request.data['album']
