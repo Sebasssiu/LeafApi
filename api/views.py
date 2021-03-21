@@ -48,6 +48,15 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['GET'])
+    def modfyUser(self, request):
+      if request.data['data']['delete']:
+        User.objects.get(id=request.data['item']['id']).delete()
+        return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+      user = User.objects.get(id=request.data['item']['id'])
+      user.artist_name = request.data['data']['name']
+      user.save()
+      return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
@@ -70,27 +79,14 @@ class AlbumViewSet(viewsets.ModelViewSet):
     serializer_class = AlbumSerializer
 
     @action(detail=False, methods=['POST'])
-    def updatealbum(self, request):
-        if request.data['delete'] == "song":
-            print("holaa")
-            Song.objects.get(id=request.data['song_id']).delete()
-            print("holaasssssssss")
-        elif request.data['delete'] == "artist":
-            User.objects.get(id=request.data['artist_id']).delete()
-        elif request.data['delete'] == "album":
-            Album.objects.get(id=request.data['id']).delete()
-        else:
-            album = Album.objects.get(id=request.data['id'])
-            album.name = request.data['album']
-            album.save()
-            song = Song.objects.get(id=request.data['song_id'])
-            song.name = request.data['song']
-            song.is_active = request.data['isSong']
-            song.save()
-            user = User.objects.get(id=request.data['artist_id'])
-            user.artist_name = request.data['artist']
-            user.save()
+    def modifyAlbum(self, request):
+      if request.data['data']['delete']:
+        Album.objects.get(id=request.data['item']['id']).delete()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+      album = Album.objects.get(id=request.data['item']['id'])
+      album.name = request.data['data']['name']
+      album.save()
+      return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
     def useralbum(self, request):
@@ -118,6 +114,17 @@ class SongViewSet(viewsets.ModelViewSet):
     serializer_class = SongSerializer
     filter_backends = [SearchFilter]
     search_fields = ['name']
+
+    @action(detail=False, methods=['POST'])
+    def modifySong(self, request):
+      if request.data['data']['delete']:
+        Song.objects.get(id=request.data['item']['id']).delete()
+        return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+      song = Song.objects.get(id=request.data['item']['id'])
+      song.name = request.data['data']['name']
+      song.is_active = request.data['data']['isActive']
+      song.save()
+      return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['GET'])
     def song_info(self, request, pk=None):
