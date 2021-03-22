@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 import datetime
+from django.db.models import Count
 
 
 User = get_user_model()
@@ -127,6 +128,14 @@ class GenreViewSet(viewsets.ModelViewSet):
 class ListenViewSet(viewsets.ModelViewSet):
     queryset = Listen.objects.all()
     serializer_class = ListenSerializer
+    @action (detail=False, methods=['GET'])
+    def artistpopularity(self, request):
+        factual = datetime.datetime.today()
+        lastmonths = factual - datetime.timedelta(weeks=12)
+        queryset = self.get_queryset().filter(date__range=[lastmonths, factual])
+        #b = queryset.annotate()
+        serializer = ListenSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class SongViewSet(viewsets.ModelViewSet):
