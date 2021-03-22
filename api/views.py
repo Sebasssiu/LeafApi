@@ -72,7 +72,7 @@ class PremiumViewSet(viewsets.ModelViewSet):
         user = User.objects.get(id=token.user_id)
         user.is_staff = True
         user.save()
-        Premium.objects.create(users=user, suscription_date=datetime.today().strftime('%Y-%m-%d'))
+        Premium.objects.create(suscription_date=datetime.today().strftime('%Y-%m-%d'), users=user)
         return Response({'response': 'Successfull'}, status=status.HTTP_200_OK)
 
 
