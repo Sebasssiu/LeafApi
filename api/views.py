@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .serializers import *
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.core import serializers
 from django.http import HttpResponse
 from rest_framework.filters import SearchFilter
@@ -9,6 +9,7 @@ from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 import datetime
+
 
 User = get_user_model()
 
@@ -107,7 +108,13 @@ class AlbumViewSet(viewsets.ModelViewSet):
         response = {'message': 'album created'}
         return Response(response, status=status.HTTP_200_OK)
 
-    #@action(detail=False, )
+    @action(detail=False, methods=['GET'])
+    def recentalbums(self, request):
+        factual = datetime.datetime.today()
+        semanapasada = datetime.datetime.today() - timedelta(7)
+        queryset = self.get_queryset().filter(release_date__range=[semanapasada, factual])
+        serializer = AlbumSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
