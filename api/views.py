@@ -156,6 +156,21 @@ class SongViewSet(viewsets.ModelViewSet):
         print(song.playlists)
         return Response('successfull', status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['POST'])
+    def createsong(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        songname = request.data['name']
+        songgenre = request.data['genre']
+        genre = Genre.objects.filter(id=songgenre)
+        songlink = request.data['link']
+        songdate = request.data['date']
+        songalbum = request.data['album']
+        album = Album.objects.filter(id=songalbum)
+        Song.objects.create(name=songname, genre=genre.first(), album_id=album.first(), is_active=True, user=user, link=songlink)
+        response = {'message': 'song created'}
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class PlayListViewSet(viewsets.ModelViewSet):
     queryset = PlayList.objects.all()
