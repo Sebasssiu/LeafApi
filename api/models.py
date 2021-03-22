@@ -15,7 +15,7 @@ User = get_user_model()
 
 class Premium(models.Model):
     suscription_date = models.DateField(blank=False)
-    User = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Album(models.Model):
