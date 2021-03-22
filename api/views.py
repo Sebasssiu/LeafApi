@@ -8,6 +8,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
+import datetime
 
 User = get_user_model()
 
@@ -95,6 +96,16 @@ class AlbumViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset().filter(user=user.id)
         serializer = AlbumSerializer(queryset, many=True)
         return Response(serializer.data)
+
+    @action(detail=False, methods=['POST'])
+    def createalbum(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        aname = request.data['name']
+        release = datetime.datetime.now()
+        Album.objects.create(name=aname, artist_id=user, release_date=release, user=user)
+        response = {'message': 'album created'}
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
