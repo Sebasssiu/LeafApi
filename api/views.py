@@ -107,6 +107,8 @@ class AlbumViewSet(viewsets.ModelViewSet):
         response = {'message': 'album created'}
         return Response(response, status=status.HTTP_200_OK)
 
+    #@action(detail=False, )
+
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
@@ -149,18 +151,26 @@ class SongViewSet(viewsets.ModelViewSet):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
         if user.is_staff:
-            song = Song.objects.get(id=request.data['song'])
-            Listen.objects.create(user=user, song=song, date=datetime.datetime.today())
-            return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
+            songid = request.data['song']
+            if Song.objects.filter(id=songid).exists():
+                song = Song.objects.get(id=request.data['song'])
+                Listen.objects.create(user=user, song=song, date=datetime.datetime.today())
+                return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'alert': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            if request.data['song'] != "":
-                count = Listen.objects.filter(date=datetime.datetime.now(), user=user.id)
-                if len(count) < 3:
-                    song = Song.objects.get(id=request.data['song'])
-                    Listen.objects.create(user=user, song=song, date=datetime.datetime.today())
-                    return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
-                else:
-                    return Response({'error': 'ERROR'}, status=status.HTTP_200_OK)
+            songid = request.data['song']
+            if Song.objects.filter(id=songid).exists():
+                if songid != "":
+                    count = Listen.objects.filter(date=datetime.datetime.now(), user=user.id)
+                    if len(count) < 3:
+                        song = Song.objects.get(id=request.data['song'])
+                        Listen.objects.create(user=user, song=song, date=datetime.datetime.today())
+                        return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'error': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'alert': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['POST'])
     def addsong(self, request):
