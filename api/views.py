@@ -162,7 +162,7 @@ class SongViewSet(viewsets.ModelViewSet):
         user = User.objects.get(id=token.user_id)
         songname = request.data['name']
         songgenre = request.data['genre']
-        genre = Genre.objects.filter(id=songgenre)
+        genre = Genre.objects.filter(name=songgenre)
         songlink = request.data['link']
         songdate = request.data['date']
         songalbum = request.data['album']
