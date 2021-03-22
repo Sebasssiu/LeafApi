@@ -149,6 +149,8 @@ class SongViewSet(viewsets.ModelViewSet):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
         if user.is_staff:
+            song = Song.objects.get(id=request.data['song'])
+            Listen.objects.create(user=user, song=song, date=datetime.datetime.today())
             return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
         else:
             if request.data['song'] != "":
