@@ -36,7 +36,7 @@ class UserViewSet(viewsets.ModelViewSet):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
         user.is_artist = request.data['isArtist']
-        user.artist_name = request.data['artist_name']
+        user.artist_name = True
         user.save()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
