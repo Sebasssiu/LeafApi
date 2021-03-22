@@ -190,6 +190,18 @@ class PlayListViewSet(viewsets.ModelViewSet):
     search_fields = ['owner__id']
 
     @action(detail=False, methods=['POST'])
+    def updateplaylist(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        idd = request.data['id']
+        #pname = request.data['name']
+        #pl = PlayList.objects.filter(name=pname).first()
+        items = Song.objects.filter(id=idd)
+        print(items.first().playlists)
+        response = {'message': 'song added'}
+        return Response(response, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['POST'])
     def createplaylist(self, request):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
