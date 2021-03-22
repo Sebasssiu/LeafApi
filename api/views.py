@@ -75,6 +75,16 @@ class PremiumViewSet(viewsets.ModelViewSet):
         Premium.objects.create(suscription_date=datetime.datetime.today().strftime('%Y-%m-%d'), users=user)
         return Response({'response': 'Successfull'}, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['GET'])
+    def lastsuscriptions(self, request):
+        factual = datetime.datetime.today()
+        semestreanterior = datetime.datetime.today() - timedelta(weeks=24)
+        queryset = self.get_queryset().filter(suscription_date__range=[semestreanterior, factual])
+        #print(len(queryset))
+        #serializer = PremiumSerializer(queryset, many=True)
+        return Response(len(queryset))
+
+
 
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
@@ -127,6 +137,7 @@ class GenreViewSet(viewsets.ModelViewSet):
 class ListenViewSet(viewsets.ModelViewSet):
     queryset = Listen.objects.all()
     serializer_class = ListenSerializer
+    """
     @action (detail=False, methods=['GET'])
     def artistpopularity(self, request):
         factual = datetime.datetime.today()
@@ -134,6 +145,7 @@ class ListenViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset().filter(date__range=[lastmonths, factual]).values('song').annotate(total=Count('song')).order_by('total')
         serializer = JoinSerializer(queryset, many=True)
         return Response(queryset)
+    """
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -207,6 +219,12 @@ class SongViewSet(viewsets.ModelViewSet):
         Song.objects.create(name=songname, genre=genre.first(), album_id=album.first(), is_active=True, user=user, link=songlink)
         response = {'message': 'song created'}
         return Response(response, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def artistproduction(self, request):
+        queryset = self.get_queryset().values('user').annotate(
+            total=Count('user')).order_by('total')
+        return Response(queryset)
 
 
 class PlayListViewSet(viewsets.ModelViewSet):
