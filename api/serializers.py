@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
 class PremiumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Premium
-        fields = ('suscription_date', 'User')
+        fields = ('suscription_date', 'user')
 
 
 class SongSerializer(serializers.ModelSerializer):
