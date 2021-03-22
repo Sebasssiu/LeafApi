@@ -35,8 +35,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def becomeArtist(self, request):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
-        user.is_artist = request.data['isArtist']
-        user.artist_name = request.data['artist_name']
+        user.artist_name = True
         user.save()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
@@ -73,7 +72,7 @@ class PremiumViewSet(viewsets.ModelViewSet):
         user = User.objects.get(id=token.user_id)
         user.is_staff = True
         user.save()
-        Premium.objects.create(suscription_date=datetime.today().strftime('%Y-%m-%d'), users=user)
+        Premium.objects.create(suscription_date=datetime.datetime.today().strftime('%Y-%m-%d'), users=user)
         return Response({'response': 'Successfull'}, status=status.HTTP_200_OK)
 
 
