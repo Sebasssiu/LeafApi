@@ -8,6 +8,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
+import datetime
 
 User = get_user_model()
 
@@ -96,6 +97,18 @@ class AlbumViewSet(viewsets.ModelViewSet):
         serializer = AlbumSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['POST'])
+    def createalbum(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        aname = request.data['name']
+        release = datetime.datetime.now()
+        Album.objects.create(name=aname, artist_id=user, release_date=release, user=user)
+        response = {'message': 'album created'}
+        return Response(response, status=status.HTTP_200_OK)
+
+    #@action(detail=False, )
+
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
@@ -138,16 +151,26 @@ class SongViewSet(viewsets.ModelViewSet):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
         if user.is_staff:
-            return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
+            songid = request.data['song']
+            if Song.objects.filter(id=songid).exists():
+                song = Song.objects.get(id=request.data['song'])
+                Listen.objects.create(user=user, song=song, date=datetime.datetime.today())
+                return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'alert': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            if request.data['song'] != "":
-                count = Listen.objects.filter(date=datetime.today().strftime('%Y-%m-%d'), user=user.id)
-                if len(count) < 3:
-                    song = Song.objects.get(id=request.data['song'])
-                    Listen.objects.create(user=user, song=song, date=datetime.today().strftime('%Y-%m-%d'))
-                    return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
-                else:
-                    return Response({'error': 'ERROR'}, status=status.HTTP_200_OK)
+            songid = request.data['song']
+            if Song.objects.filter(id=songid).exists():
+                if songid != "":
+                    count = Listen.objects.filter(date=datetime.datetime.now(), user=user.id)
+                    if len(count) < 3:
+                        song = Song.objects.get(id=request.data['song'])
+                        Listen.objects.create(user=user, song=song, date=datetime.datetime.today())
+                        return Response({'alert': 'Successfull'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'error': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response({'alert': 'ERROR'}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['POST'])
     def addsong(self, request):
@@ -156,12 +179,39 @@ class SongViewSet(viewsets.ModelViewSet):
         print(song.playlists)
         return Response('successfull', status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['POST'])
+    def createsong(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        songname = request.data['name']
+        songgenre = request.data['genre']
+        genre = Genre.objects.filter(name=songgenre)
+        songlink = request.data['link']
+        songdate = request.data['date']
+        songalbum = request.data['album']
+        album = Album.objects.filter(id=songalbum)
+        Song.objects.create(name=songname, genre=genre.first(), album_id=album.first(), is_active=True, user=user, link=songlink)
+        response = {'message': 'song created'}
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class PlayListViewSet(viewsets.ModelViewSet):
     queryset = PlayList.objects.all()
     serializer_class = PlayListSerializer
     filter_backends = [SearchFilter]
     search_fields = ['owner__id']
+
+    @action(detail=False, methods=['POST'])
+    def updateplaylist(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        user = User.objects.get(id=token.user_id)
+        idd = request.data['id']
+        #pname = request.data['name']
+        #pl = PlayList.objects.filter(name=pname).first()
+        items = Song.objects.filter(id=idd)
+        print(items.first().playlists)
+        response = {'message': 'song added'}
+        return Response(response, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
     def createplaylist(self, request):
