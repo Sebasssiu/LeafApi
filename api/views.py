@@ -132,10 +132,9 @@ class ListenViewSet(viewsets.ModelViewSet):
     def artistpopularity(self, request):
         factual = datetime.datetime.today()
         lastmonths = factual - datetime.timedelta(weeks=12)
-        queryset = self.get_queryset().filter(date__range=[lastmonths, factual])
-        #b = queryset.annotate()
-        serializer = ListenSerializer(queryset, many=True)
-        return Response(serializer.data)
+        queryset = self.get_queryset().filter(date__range=[lastmonths, factual]).values('song').annotate(total=Count('song')).order_by('total')
+        serializer = JoinSerializer(queryset, many=True)
+        return Response(queryset)
 
 
 class SongViewSet(viewsets.ModelViewSet):

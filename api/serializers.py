@@ -56,4 +56,13 @@ class ListenSerializer(serializers.ModelSerializer):
         fields = ('id', 'song', 'user', 'date')
 
 
+class JoinSerializer(serializers.ModelSerializer):
+    song = serializers.StringRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Listen
+        fields = ['id', 'song']
+
+
+
 
