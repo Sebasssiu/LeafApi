@@ -181,7 +181,7 @@ class ListenViewSet(viewsets.ModelViewSet):
             i['user'] = User.objects.get(id=temp_id).username
         querylist.sort(key=itemgetter('total'), reverse=True)
         finalquery = []
-        for i in range (5):
+        for i in range (3):
             finalquery.append(querylist[i])
         return Response(finalquery)
 
