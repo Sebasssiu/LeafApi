@@ -154,10 +154,7 @@ class ListenViewSet(viewsets.ModelViewSet):
         for d in querylist:
             result[d['song']] += int(d['total'])
         result = sorted(result.items(), key=lambda k_v: k_v[1], reverse=True)
-        finalresult = []
-        for i in range(3):
-            finalresult.append(result[i])
-        return Response(finalresult)
+        return Response(result)
 
 
     @action(detail=False, methods=['GET'])
