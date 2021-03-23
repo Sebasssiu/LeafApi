@@ -12,5 +12,6 @@ router.register('songs', SongViewSet)
 router.register('playlists', PlayListViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path(r'api-token-auth/', CustomAuthToken.as_view())
 ]
