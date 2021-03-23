@@ -14,12 +14,14 @@ class ListenSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    listen = ListenSerializer(many=True)
-    
     class Meta:
         model = User
-        fields = ('id', 'username', 'artist_name', 'is_artist', 'is_admin', 'is_staff', 'password', 'listen')
-        extra_kwargs = {'password': {'write_only': True, 'required': True}}
+        fields = ('id', 'username', 'artist_name', 'is_artist', 'is_admin', 'is_staff', 'password')
+        extra_kwargs = {'password': {'write_only': True, 'required': True},
+                        'artist_name': {'required': False},
+                        'is_artist': {'required': False},
+                        'is_admin': {'required': False},
+                        'is_staff': {'required': False}}
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
