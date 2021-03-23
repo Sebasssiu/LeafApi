@@ -49,6 +49,13 @@ class SongSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
         list_serializer_class = IsActiveListSerializer
 
+
+class AllSongSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Song
+    fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
+
+
 class PlayListSerializer(serializers.ModelSerializer):
     songs = SongSerializer(many=True)
 

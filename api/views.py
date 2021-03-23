@@ -191,6 +191,12 @@ class ListenViewSet(viewsets.ModelViewSet):
         return Response(finalresult)
 
 
+class AllSongViewSet(viewsets.ModelViewSet):
+  queryset = Song.objects.all()
+  serializer_class = AllSongSerializer
+  filter_backends = [SearchFilter]
+  search_fields = ['name']
+
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
     serializer_class = SongSerializer
