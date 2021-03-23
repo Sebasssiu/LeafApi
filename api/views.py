@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 import datetime
 from django.db.models import Count
 from django.db import connection
-
+from django.http import JsonResponse
 User = get_user_model()
 
 
