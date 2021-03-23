@@ -11,7 +11,7 @@ import datetime
 from operator import itemgetter
 from collections import defaultdict
 from rest_framework.authtoken.views import ObtainAuthToken
-
+from django.db import connection
 
 
 User = get_user_model()
