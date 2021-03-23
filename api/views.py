@@ -301,7 +301,6 @@ class PlayListViewSet(viewsets.ModelViewSet):
       raw_query = f"INSERT INTO api_song_playlists (song_id, playlist_id) VALUES ({request.data['song_id']}, {request.data['playlist_id']})"
       cursor = connection.cursor()
       cursor.execute(raw_query)
-      cursor.fetchall()
       return Response({'response': 'Successfully'})
 
     @action(detail=False, methods=['POST'])
