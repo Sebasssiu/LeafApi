@@ -124,8 +124,8 @@ class AlbumViewSet(viewsets.ModelViewSet):
     def recentalbums(self, request):
         factual = datetime.datetime.today()
         semanapasada = datetime.datetime.today() - timedelta(7)
-        queryset = self.get_queryset().filter(release_date__range=[semanapasada, factual])
-        serializer = AlbumSerializer(queryset, many=True)
+        queryset = self.get_queryset().filter(release_date__range=[semanapasada, factual]).order_by('-release_date')
+        serializer = ALbumDateSerializer(queryset, many=True)
         return Response(serializer.data)
 
 

@@ -80,6 +80,11 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'songs')
 
 
+class ALbumDateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Album
+        fields = ('name', 'release_date')
+
 
 
 
