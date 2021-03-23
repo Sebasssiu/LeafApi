@@ -9,9 +9,11 @@ from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 import datetime
+
 from django.db.models import Count
 from django.db import connection
 from django.http import JsonResponse
+
 User = get_user_model()
 
 
@@ -61,6 +63,16 @@ class UserViewSet(viewsets.ModelViewSet):
       user.artist_name = request.data['data']['name']
       user.save()
       return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def activeusers2(self, request):
+        queryset = self.get_queryset()
+        serializer = PruebaSerializer(queryset, many=True)
+        #print(Listen.objects.select_related('user', 'song').get(user='oscar'))
+        #args = User.objects.aggregate(Max('len(listen)'))
+        return Response(serializer.data)
+
+
 
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
@@ -142,10 +154,16 @@ class ListenViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def activeusers(self, request):
-        queryset = self.get_queryset().values('user').annotate(
-            total=Count('user')).order_by('total')
+        queryset = self.get_queryset().values('user').annotate(total=Count('user')).order_by('total')
         return Response(queryset)
 
+    @action(detail=False, methods=['GET'])
+    def prueba500(self, request):
+        queryset = Listen.objects.raw('SELECT song_id FROM api_listen group by api_listen.song_id')
+        #('SELECT api_users.username, api_listen.song_id FROM api_listen INNER JOIN api_users on api_listen.user_id = api_users.id')
+        serializer = ListenSerializer(queryset, many=True)
+
+        return Response(serializer.data)
 
     """
     @action (detail=False, methods=['GET'])
@@ -230,12 +248,13 @@ class SongViewSet(viewsets.ModelViewSet):
         response = {'message': 'song created'}
         return Response(response, status=status.HTTP_200_OK)
 
+    """
     @action(detail=False, methods=['GET'])
     def artistproduction(self, request):
         queryset = self.get_queryset().values('user').annotate(
             total=Count('user')).order_by('total')
         return Response(queryset)
-
+    """
 
 class PlayListViewSet(viewsets.ModelViewSet):
     queryset = PlayList.objects.all()

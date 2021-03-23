@@ -10,6 +10,8 @@ class Users(AbstractUser):
     is_artist = models.BooleanField(default=False, blank=False)
     is_admin = models.BooleanField(default=False, blank=False)
     is_staff = models.BooleanField(default=False, blank=False)
+    def __str__(self):
+        return self.username
 
 User = get_user_model()
 
@@ -41,8 +43,10 @@ class Song(models.Model):
     playlists = models.ManyToManyField(PlayList, related_name='songs')
 
 class Listen(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listen')
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     date = models.DateField(blank=False)
+    def __str__(self):
+        return str(self.user)
 
 

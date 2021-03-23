@@ -5,11 +5,16 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+class ListenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Listen
+        fields = ('id', 'song', 'user', 'date')
 
 class UserSerializer(serializers.ModelSerializer):
+    listen = ListenSerializer(many=True)
     class Meta:
         model = User
-        fields = ('id', 'username', 'artist_name', 'is_artist', 'is_admin', 'is_staff', 'password')
+        fields = ('id', 'username', 'artist_name', 'is_artist', 'is_admin', 'is_staff', 'password', 'listen')
         extra_kwargs = {'password': {'write_only': True, 'required': True}}
 
     def create(self, validated_data):
@@ -50,15 +55,17 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'songs')
 
 
-class ListenSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Listen
-        fields = ('id', 'song', 'user', 'date')
 
 class SongTrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
         fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
+
+
+class PruebaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Listen
+        fields = ['username']
 
 
 
