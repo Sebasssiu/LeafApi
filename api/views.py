@@ -2,13 +2,16 @@ from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .serializers import *
 from datetime import datetime, timedelta
-from django.core import serializers
-from django.http import HttpResponse
 from rest_framework.filters import SearchFilter
 from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
+from django.db.models import Count
 import datetime
+from operator import itemgetter
+from collections import defaultdict
+
+
 
 
 User = get_user_model()
@@ -150,27 +153,54 @@ class ListenViewSet(viewsets.ModelViewSet):
     serializer_class = ListenSerializer
 
     @action(detail=False, methods=['GET'])
-    def activeusers(self, request):
-        queryset = self.get_queryset().values('user').annotate(total=Count('user')).order_by('total')
-        return Response(queryset)
+    def getingpopular(self, request):
+        factual = datetime.datetime.today()
+        hacemeses = datetime.datetime.today() - timedelta(weeks=12)
+        queryset = self.get_queryset().filter(date__range=[hacemeses, factual])
+        query = queryset.values('song').annotate(total=Count('song')).order_by('total')
+        querylist = list(query)
+        for i in querylist:
+            temp_id = i['song']
+            i['song'] = Song.objects.get(id=temp_id).user.username
+        result = defaultdict(int)
+        for d in querylist:
+            result[d['song']] += int(d['total'])
+        result = sorted(result.items(), key=lambda k_v: k_v[1], reverse=True)
+        finalresult = []
+        for i in range(3):
+            finalresult.append(result[i])
+        return Response(finalresult)
+
 
     @action(detail=False, methods=['GET'])
-    def prueba500(self, request):
-        queryset = Listen.objects.raw('SELECT song_id FROM api_listen group by api_listen.song_id')
-        #('SELECT api_users.username, api_listen.song_id FROM api_listen INNER JOIN api_users on api_listen.user_id = api_users.id')
-        serializer = ListenSerializer(queryset, many=True)
+    def mostactive(self, request):
+        queryset = self.get_queryset().values('user').annotate(total=Count('user')).order_by('total')
+        querylist = list(queryset)
+        for i in querylist:
+            temp_id = i['user']
+            i['user'] = User.objects.get(id=temp_id).username
+        querylist.sort(key=itemgetter('total'), reverse=True)
+        finalquery = []
+        for i in range (5):
+            finalquery.append(querylist[i])
+        return Response(finalquery)
 
-        return Response(serializer.data)
+    @action(detail=False, methods=['GET'])
+    def populargenres(self, request):
+        queryset = self.get_queryset().values('song').annotate(total=Count('song')).order_by('total')
+        querylist = list(queryset)
+        for i in querylist:
+            temp_id = i['song']
+            i['song'] = Song.objects.get(id=temp_id).genre.name
+        result = defaultdict(int)
+        for d in querylist:
+            result[d['song']] += int(d['total'])
+        result = sorted(result.items(), key=lambda k_v: k_v[1], reverse=True)
+        finalresult = []
+        for i in range(3):
+            finalresult.append(result[i])
 
-    """
-    @action (detail=False, methods=['GET'])
-    def artistpopularity(self, request):
-        factual = datetime.datetime.today()
-        lastmonths = factual - datetime.timedelta(weeks=12)
-        queryset = self.get_queryset().filter(date__range=[lastmonths, factual]).values('song').annotate(total=Count('song')).order_by('total')
-        serializer = JoinSerializer(queryset, many=True)
-        return Response(queryset)
-    """
+        return Response(finalresult)
 
 
 class SongViewSet(viewsets.ModelViewSet):
@@ -245,13 +275,20 @@ class SongViewSet(viewsets.ModelViewSet):
         response = {'message': 'song created'}
         return Response(response, status=status.HTTP_200_OK)
 
-    """
     @action(detail=False, methods=['GET'])
-    def artistproduction(self, request):
-        queryset = self.get_queryset().values('user').annotate(
-            total=Count('user')).order_by('total')
-        return Response(queryset)
-    """
+    def popularartists(self, request):
+        queryset = self.get_queryset().values('user').annotate(total=Count('user')).order_by('total')
+        querylist = list(queryset)
+        for i in querylist:
+            temp_id = i['user']
+            i['user'] = User.objects.get(id=temp_id).username
+        querylist.sort(key=itemgetter('total'), reverse=True)
+        finalquery = []
+        for i in range(3):
+            finalquery.append(querylist[i])
+        return Response(finalquery)
+
+
 
 class PlayListViewSet(viewsets.ModelViewSet):
     queryset = PlayList.objects.all()

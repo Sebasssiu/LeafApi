@@ -28,6 +28,8 @@ class Album(models.Model):
 
 class Genre(models.Model):
     name = models.CharField(max_length=32, blank=False)
+    def __str__(self):
+        return str(self.name)
 
 class PlayList(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
@@ -41,6 +43,8 @@ class Song(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     link = models.CharField(max_length=300, blank=False, default="null")
     playlists = models.ManyToManyField(PlayList, related_name='songs')
+    def __str__(self):
+        return str(self.genre)
 
 class Listen(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listen')
