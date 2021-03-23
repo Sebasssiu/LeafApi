@@ -64,15 +64,6 @@ class UserViewSet(viewsets.ModelViewSet):
       user.save()
       return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['GET'])
-    def activeusers2(self, request):
-        queryset = self.get_queryset()
-        serializer = PruebaSerializer(queryset, many=True)
-        #print(Listen.objects.select_related('user', 'song').get(user='oscar'))
-        #args = User.objects.aggregate(Max('len(listen)'))
-        return Response(serializer.data)
-
-
 
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
@@ -94,10 +85,7 @@ class PremiumViewSet(viewsets.ModelViewSet):
         factual = datetime.datetime.today()
         semestreanterior = datetime.datetime.today() - timedelta(weeks=24)
         queryset = self.get_queryset().filter(suscription_date__range=[semestreanterior, factual])
-        #print(len(queryset))
-        #serializer = PremiumSerializer(queryset, many=True)
         return Response(len(queryset))
-
 
 
 class AlbumViewSet(viewsets.ModelViewSet):
@@ -289,7 +277,6 @@ class SongViewSet(viewsets.ModelViewSet):
         return Response(finalquery)
 
 
-
 class PlayListViewSet(viewsets.ModelViewSet):
     queryset = PlayList.objects.all()
     serializer_class = PlayListSerializer
@@ -306,10 +293,7 @@ class PlayListViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def updateplaylist(self, request):
         token = Token.objects.get(key=request.data['token'])
-        user = User.objects.get(id=token.user_id)
         idd = request.data['id']
-        #pname = request.data['name']
-        #pl = PlayList.objects.filter(name=pname).first()
         items = Song.objects.filter(id=idd)
         print(items.first().playlists)
         response = {'message': 'song added'}
@@ -332,7 +316,6 @@ class PlayListViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset().filter(owner=user.id)
         serializer = PlayListSerializer(queryset, many=True)
         return Response(serializer.data)
-
 
 
 class CustomAuthToken(ObtainAuthToken):

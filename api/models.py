@@ -5,15 +5,19 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
 
+
 class Users(AbstractUser):
     artist_name = models.CharField(max_length=32, blank=True, default='')
     is_artist = models.BooleanField(default=False, blank=False)
     is_admin = models.BooleanField(default=False, blank=False)
     is_staff = models.BooleanField(default=False, blank=False)
+
     def __str__(self):
         return self.username
 
+
 User = get_user_model()
+
 
 class Premium(models.Model):
     suscription_date = models.DateField(blank=False)
@@ -26,14 +30,18 @@ class Album(models.Model):
     release_date = models.DateField(blank=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
+
 class Genre(models.Model):
     name = models.CharField(max_length=32, blank=False)
+
     def __str__(self):
         return str(self.name)
+
 
 class PlayList(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=False)
     name = models.CharField(max_length=30, blank=False)
+
 
 class Song(models.Model):
     name = models.CharField(max_length=32, blank=False)
@@ -43,14 +51,15 @@ class Song(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     link = models.CharField(max_length=300, blank=False, default="null")
     playlists = models.ManyToManyField(PlayList, related_name='songs')
+
     def __str__(self):
         return str(self.genre)
+
 
 class Listen(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='listen')
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     date = models.DateField(blank=False)
+
     def __str__(self):
         return str(self.user)
-
-
