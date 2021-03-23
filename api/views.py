@@ -139,6 +139,14 @@ class GenreViewSet(viewsets.ModelViewSet):
 class ListenViewSet(viewsets.ModelViewSet):
     queryset = Listen.objects.all()
     serializer_class = ListenSerializer
+
+    @action(detail=False, methods=['GET'])
+    def activeusers(self, request):
+        queryset = self.get_queryset().values('user').annotate(
+            total=Count('user')).order_by('total')
+        return Response(queryset)
+
+
     """
     @action (detail=False, methods=['GET'])
     def artistpopularity(self, request):
