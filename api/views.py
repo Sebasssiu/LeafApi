@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 import datetime
 from django.db.models import Count
-
+from django.db import connection
 
 User = get_user_model()
 
