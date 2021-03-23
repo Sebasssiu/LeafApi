@@ -24,9 +24,9 @@ class PremiumSerializer(serializers.ModelSerializer):
 
 
 class SongSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = Song
-    fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
+    class Meta:
+        model = Song
+        fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
 
 
 class PlayListSerializer(serializers.ModelSerializer):
@@ -55,13 +55,11 @@ class ListenSerializer(serializers.ModelSerializer):
         model = Listen
         fields = ('id', 'song', 'user', 'date')
 
-
-class JoinSerializer(serializers.ModelSerializer):
-    song = serializers.StringRelatedField(many=True, read_only=True)
-
+class SongTrySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Listen
-        fields = ['id', 'song']
+        model = Song
+        fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
+
 
 
 
