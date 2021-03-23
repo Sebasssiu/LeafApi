@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import django_heroku
 from pathlib import Path
 import os
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,12 +22,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+vl&!x$1af(%1w5y=i9ufnjj6m*5q#=@u^f#mb5sx(w=yp)5r%'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','leaf-musicapp.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'leaf-musicapp.herokuapp.com']
 
 
 # Application definition
@@ -45,7 +47,7 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     )
 }
 
@@ -92,11 +94,11 @@ WSGI_APPLICATION = 'leaf.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'dd80p9uvquhk86',
-        'USER': 'zepqqvzizmbmte',
-        'PASSWORD': 'b9f1a4dad1057800f8a8e17c21a94f6d49c056f377c6f90574d65b608672fe58',
-        'HOST': 'ec2-50-19-176-236.compute-1.amazonaws.com',
-        'POST': '5432'
+        'NAME': config('NAME'),
+        'USER': config('USER'),
+        'PASSWORD': config('PASSWORD'),
+        'HOST': config('HOST'),
+        'POST': config('POST')
     }
 }
 
