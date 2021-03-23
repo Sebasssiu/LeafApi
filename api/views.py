@@ -8,10 +8,6 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 from django.db.models import Count
 import datetime
-from operator import itemgetter
-from collections import defaultdict
-
-
 
 
 User = get_user_model()
@@ -325,3 +321,18 @@ class PlayListViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset().filter(owner=user.id)
         serializer = PlayListSerializer(queryset, many=True)
         return Response(serializer.data)
+
+
+
+class CustomAuthToken(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,
+                                       context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token = Token.objects.get(user=user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk
+        })
