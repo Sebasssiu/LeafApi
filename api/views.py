@@ -205,6 +205,7 @@ class SongViewSet(viewsets.ModelViewSet):
       song = Song.objects.get(id=request.data['item']['id'])
       song.name = request.data['data']['name']
       song.is_active = request.data['data']['isActive']
+      song.link = request.data['data']['link']
       song.save()
       return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 

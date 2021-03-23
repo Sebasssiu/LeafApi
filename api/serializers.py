@@ -36,12 +36,18 @@ class PremiumSerializer(serializers.ModelSerializer):
         fields = ('suscription_date', 'users')
 
 
+class IsActiveListSerializer(serializers.ListSerializer):
+
+  def to_representation(self, data):
+    data = data.filter(is_active=True)
+    return super().to_representation(data)
+
 class SongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Song
         fields = ('id', 'name', 'genre', 'album_id', 'is_active', 'user', 'link')
-
+        list_serializer_class = IsActiveListSerializer
 
 class PlayListSerializer(serializers.ModelSerializer):
     songs = SongSerializer(many=True)
