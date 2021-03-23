@@ -41,6 +41,7 @@ class PlayListSerializer(serializers.ModelSerializer):
         fields = ('id', 'owner', 'name', 'songs')
 
 
+
 class AlbumSerializer(serializers.ModelSerializer):
     almbum_songs = SongSerializer(many=True)
     class Meta:

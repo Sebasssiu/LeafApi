@@ -265,6 +265,14 @@ class PlayListViewSet(viewsets.ModelViewSet):
     search_fields = ['owner__id']
 
     @action(detail=False, methods=['POST'])
+    def addSongToPlaylist(self, request):
+      raw_query = f"INSERT INTO api_song_playlists (song_id, playlist_id) VALUES ({request.data['song_id']}, {request.data['playlist_id']})"
+      cursor = connection.cursor()
+      cursor.execute(raw_query)
+      cursor.fetchall()
+      return Response({'response': 'Successfully'})
+
+    @action(detail=False, methods=['POST'])
     def updateplaylist(self, request):
         token = Token.objects.get(key=request.data['token'])
         user = User.objects.get(id=token.user_id)
