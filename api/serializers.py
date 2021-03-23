@@ -72,3 +72,5 @@ class PruebaSerializer(serializers.ModelSerializer):
 
 
 
+
+
