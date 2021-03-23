@@ -9,9 +9,6 @@ from rest_framework.decorators import action
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import get_user_model
 import datetime
-from django.db.models import Count, Max
-from django.http import JsonResponse, HttpResponse
-from django.core import serializers
 
 
 User = get_user_model()
