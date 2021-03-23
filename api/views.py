@@ -165,10 +165,7 @@ class ListenViewSet(viewsets.ModelViewSet):
             temp_id = i['user']
             i['user'] = User.objects.get(id=temp_id).username
         querylist.sort(key=itemgetter('total'), reverse=True)
-        finalquery = []
-        for i in range (3):
-            finalquery.append(querylist[i])
-        return Response(finalquery)
+        return Response(querylist)
 
     @action(detail=False, methods=['GET'])
     def populargenres(self, request):
