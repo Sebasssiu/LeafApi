@@ -52,7 +52,7 @@ class Song(models.Model):
     playlists = models.ManyToManyField(PlayList, related_name='songs')
 
     def __str__(self):
-        return str(self.genre)
+        return self.name
 
 
 class Listen(models.Model):
