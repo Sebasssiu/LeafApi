@@ -124,8 +124,8 @@ class AlbumViewSet(viewsets.ModelViewSet):
     def recentalbums(self, request):
         factual = datetime.datetime.today()
         semanapasada = datetime.datetime.today() - timedelta(7)
-        queryset = self.get_queryset().filter(release_date__range=[semanapasada, factual])
-        serializer = AlbumSerializer(queryset, many=True)
+        queryset = self.get_queryset().filter(release_date__range=[semanapasada, factual]).order_by('-release_date')
+        serializer = ALbumDateSerializer(queryset, many=True)
         return Response(serializer.data)
 
 
@@ -154,10 +154,7 @@ class ListenViewSet(viewsets.ModelViewSet):
         for d in querylist:
             result[d['song']] += int(d['total'])
         result = sorted(result.items(), key=lambda k_v: k_v[1], reverse=True)
-        finalresult = []
-        for i in range(3):
-            finalresult.append(result[i])
-        return Response(finalresult)
+        return Response(result)
 
 
     @action(detail=False, methods=['GET'])
@@ -168,10 +165,7 @@ class ListenViewSet(viewsets.ModelViewSet):
             temp_id = i['user']
             i['user'] = User.objects.get(id=temp_id).username
         querylist.sort(key=itemgetter('total'), reverse=True)
-        finalquery = []
-        for i in range (3):
-            finalquery.append(querylist[i])
-        return Response(finalquery)
+        return Response(querylist)
 
     @action(detail=False, methods=['GET'])
     def populargenres(self, request):
@@ -184,11 +178,8 @@ class ListenViewSet(viewsets.ModelViewSet):
         for d in querylist:
             result[d['song']] += int(d['total'])
         result = sorted(result.items(), key=lambda k_v: k_v[1], reverse=True)
-        finalresult = []
-        for i in range(3):
-            finalresult.append(result[i])
 
-        return Response(finalresult)
+        return Response(result)
 
 
 class AllSongViewSet(viewsets.ModelViewSet):
@@ -278,10 +269,7 @@ class SongViewSet(viewsets.ModelViewSet):
             temp_id = i['user']
             i['user'] = User.objects.get(id=temp_id).username
         querylist.sort(key=itemgetter('total'), reverse=True)
-        finalquery = []
-        for i in range(3):
-            finalquery.append(querylist[i])
-        return Response(finalquery)
+        return Response(querylist)
 
 
 class PlayListViewSet(viewsets.ModelViewSet):
