@@ -14,7 +14,7 @@ class ListenAdmin(admin.ModelAdmin):
 
 @admin.register(Album)
 class AlbumAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'artist_id']
+    list_display = ['id', 'name']
 
 
 @admin.register(PlayList)
