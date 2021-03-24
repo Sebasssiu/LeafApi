@@ -87,6 +87,16 @@ class PremiumViewSet(viewsets.ModelViewSet):
         queryset = self.get_queryset().filter(suscription_date__range=[semestreanterior, factual])
         return Response(len(queryset))
 
+    @action(detail=False, methods=['GET'])
+    def suscriptionmonthly(self, request):
+      raw_query = """SELECT to_char(suscription_date, 'MM') as mes, count(*) from api_premium
+      where suscription_date >= date_trunc('month', (current_date) - interval '6 month') 
+      and suscription_date < date_trunc('month', current_date+ interval '1 month')
+      group by mes"""
+      cursor = connection.cursor()
+      print(cursor.execute(raw_query))
+      return Response(cursor.fetchall())
+
 
 class AlbumViewSet(viewsets.ModelViewSet):
     queryset = Album.objects.all()
