@@ -116,7 +116,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
         user = User.objects.get(id=token.user_id)
         aname = request.data['name']
         release = datetime.datetime.now()
-        Album.objects.create(name=aname, artist_id=user, release_date=release, user=user)
+        Album.objects.create(name=aname, release_date=release, user=user)
         response = {'message': 'album created'}
         return Response(response, status=status.HTTP_200_OK)
 

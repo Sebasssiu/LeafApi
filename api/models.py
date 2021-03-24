@@ -26,7 +26,6 @@ class Premium(models.Model):
 
 class Album(models.Model):
     name = models.CharField(max_length=32, blank=False)
-    artist_id = models.CharField(max_length=32, blank=False)
     release_date = models.DateField(blank=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
