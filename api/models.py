@@ -6,11 +6,25 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
 
 
+class Monitor(models.Model):
+    name = models.CharField(max_length=32, blank=False)
+    task_1 = models.BooleanField(default=False, blank=True)
+    task_2 = models.BooleanField(default=False, blank=True)
+    task_3 = models.BooleanField(default=False, blank=True)
+    task_4 = models.BooleanField(default=False, blank=True)
+    task_5 = models.BooleanField(default=False, blank=True)
+    task_6 = models.BooleanField(default=False, blank=True)
+    task_7 = models.BooleanField(default=False, blank=True)
+    task_8 = models.BooleanField(default=False, blank=True)
+
+
 class Users(AbstractUser):
     artist_name = models.CharField(max_length=32, blank=True, default='')
     is_artist = models.BooleanField(default=False, blank=False)
     is_admin = models.BooleanField(default=False, blank=False)
     is_staff = models.BooleanField(default=False, blank=False)
+    is_active = models.BooleanField(default=True, blank=False)
+    monitor_id = models.ForeignKey(Monitor, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         return self.username
@@ -28,6 +42,7 @@ class Album(models.Model):
     name = models.CharField(max_length=32, blank=False)
     release_date = models.DateField(blank=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True, blank=False)
 
 
 class Genre(models.Model):
@@ -62,3 +77,4 @@ class Listen(models.Model):
 
     def __str__(self):
         return str(self.user)
+

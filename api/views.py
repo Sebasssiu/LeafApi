@@ -335,3 +335,8 @@ class CustomAuthToken(ObtainAuthToken):
             'token': token.key,
             'user_id': user.pk
         })
+
+
+class MonitorViewSet(viewsets.ModelViewSet):
+    queryset = Monitor.objects.all()
+    serializer_class = MonitorSerializer

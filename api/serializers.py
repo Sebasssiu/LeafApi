@@ -16,7 +16,7 @@ class ListenSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'artist_name', 'is_artist', 'is_admin', 'is_staff', 'password')
+        fields = ('id', 'username', 'artist_name', 'is_artist', 'is_admin', 'is_staff', 'password', 'is_active','monitor_id')
         extra_kwargs = {'password': {'write_only': True, 'required': True},
                         'artist_name': {'required': False},
                         'is_artist': {'required': False},
@@ -69,7 +69,7 @@ class AlbumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Album
-        fields = ('id', 'name', 'release_date', 'user', 'almbum_songs')
+        fields = ('id', 'name', 'release_date', 'user', 'almbum_songs', 'is_active')
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -86,10 +86,7 @@ class ALbumDateSerializer(serializers.ModelSerializer):
         fields = ('name', 'release_date')
 
 
-
-
-
-
-
-
-
+class MonitorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Monitor
+        fields = ('id', 'name', 'task_1', 'task_2', 'task_3', 'task_4', 'task_5', 'task_6', 'task_7', 'task_8')

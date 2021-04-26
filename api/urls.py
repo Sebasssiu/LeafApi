@@ -11,6 +11,7 @@ router.register('listen', ListenViewSet)
 router.register('songs', SongViewSet)
 router.register('playlists', PlayListViewSet)
 router.register('allSongs', AllSongViewSet)
+router.register('monitor', MonitorViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
