@@ -32,4 +32,9 @@ class GenreAdmin(admin.ModelAdmin):
     list_display = ['id', 'name']
 
 
+@admin.register(Monitor)
+class MonitorAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'task_1', 'task_2', 'task_3', 'task_4', 'task_5', 'task_6', 'task_7', 'task_8']
+
+
 admin.site.register(Premium)

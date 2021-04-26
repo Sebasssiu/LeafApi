@@ -64,6 +64,27 @@ class UserViewSet(viewsets.ModelViewSet):
       user.save()
       return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['POST'])
+    def getMonitor(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        queryset = self.get_queryset().filter(id=token.user_id).values('monitor_id')
+        # print(queryset[0].get('monitor_id'))
+        object1 = Monitor.objects.filter(id=queryset[0].get('monitor_id'))[0]
+        response = {
+            'id': object1.id,
+            'name': object1.name,
+            'task_1': object1.task_1,
+            'task_2': object1.task_2,
+            'task_3': object1.task_3,
+            'task_4': object1.task_4,
+            'task_5': object1.task_5,
+            'task_6': object1.task_6,
+            'task_7': object1.task_7,
+            'task_8': object1.task_8,
+        }
+        return Response(response, status=status.HTTP_200_OK)
+
+
 
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
