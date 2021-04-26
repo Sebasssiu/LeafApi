@@ -209,8 +209,23 @@ class ListenViewSet(viewsets.ModelViewSet):
         for d in querylist:
             result[d['song']] += int(d['total'])
         result = sorted(result.items(), key=lambda k_v: k_v[1], reverse=True)
-
         return Response(result)
+
+    @action(detail=False, methods=['POST'])
+    def pay(self, request):
+        token = Token.objects.get(key=request.data['token'])
+        queryset = Song.objects.filter(user=token.user_id)
+        user_songs = []
+        for i in queryset:
+            user_songs.append(i.id)
+        listen_queryset = Listen.objects.filter(song__in=user_songs)
+        total_listen = len(listen_queryset)
+        # EN LA SIGUIENTE LINEA SE CALCULA CUANTO SE LE VA A PAGAR
+        paga = total_listen * 0.05
+        response = {
+            'pay': paga,
+        }
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class AllSongViewSet(viewsets.ModelViewSet):
