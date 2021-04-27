@@ -69,6 +69,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user = User.objects.get(id=request.data['user_id'])
         monitor = Monitor.objects.get(id=request.data['monitor_id'])
         user.monitor_id = monitor
+        user.save()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
