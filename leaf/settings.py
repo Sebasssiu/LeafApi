@@ -26,7 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['leaf-musicapp.herokuapp.com', 'http://127.0.0.1:3000']
+ALLOWED_HOSTS = ['leaf-musicapp.herokuapp.com', 'http://127.0.0.1']
 
 # Application definition
 
@@ -62,7 +62,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    'https://leaf-musicapp.web.app', 'localhost:3000'
+    'https://leaf-musicapp.web.app', 'http://localhost:3000'
 ]
 
 ROOT_URLCONF = 'leaf.urls'
