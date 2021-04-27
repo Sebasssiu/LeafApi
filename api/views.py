@@ -67,7 +67,8 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def createmonitor(self, request):
         user = User.objects.get(id=request.data['user_id'])
-        user.monitor_id = request.data['monitor_id']
+        monitor = Monitor.objects.get(id=request.data['monitor_id'])
+        user.monitor_id = monitor
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
