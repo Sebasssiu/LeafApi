@@ -65,6 +65,12 @@ class UserViewSet(viewsets.ModelViewSet):
       return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
+    def createmonitor(self, request):
+        user = User.objects.get(id=request.data['user_id'])
+        user.monitor_id = request.data['monitor_id']
+        return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['POST'])
     def getMonitor(self, request):
         token = Token.objects.get(key=request.data['token'])
         queryset = self.get_queryset().filter(id=token.user_id).values('monitor_id')
