@@ -62,7 +62,7 @@ MIDDLEWARE = [
 ]
 
 CORS_ORIGIN_WHITELIST = [
-    'https://leaf-musicapp.web.app', 'localhost:3000'
+    'https://leaf-musicapp.web.app', 'http://localhost:3000'
 ]
 
 ROOT_URLCONF = 'leaf.urls'
