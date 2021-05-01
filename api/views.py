@@ -56,8 +56,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def modifyUser(self, request):
-        variable_name = "user.id"
-        raw_query = f"SET SESSION {variable_name} = '{request.data['item']['id']}';"
+        user_id = request.data['item']['id']
+        raw_query = f'SET SESSION "user.id" = {user_id};'
         cursor = connection.cursor()
         cursor.execute(raw_query)
         if request.data['data']['delete']:
