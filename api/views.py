@@ -137,6 +137,7 @@ class AlbumViewSet(viewsets.ModelViewSet):
         Album.objects.get(id=request.data['item']['id']).delete()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
       album = Album.objects.get(id=request.data['item']['id'])
+      album.is_active = request.data['data']['isActive']
       album.name = request.data['data']['name']
       album.save()
       return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
