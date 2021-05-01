@@ -56,9 +56,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def modifyUser(self, request):
-        raw_query = f"SET SESSION {}"
+        variable_name = "user.id"
+        raw_query = f"SET SESSION {variable_name} = '{request.data['item']['id']}';"
         cursor = connection.cursor()
-
+        cursor.execute(raw_query)
         if request.data['data']['delete']:
             User.objects.get(id=request.data['item']['id']).delete()
             return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
@@ -156,14 +157,14 @@ class AlbumViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def modifyAlbum(self, request):
-      if request.data['data']['delete']:
-        Album.objects.get(id=request.data['item']['id']).delete()
+        if request.data['data']['delete']:
+            Album.objects.get(id=request.data['item']['id']).delete()
+            return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+        album = Album.objects.get(id=request.data['item']['id'])
+        album.is_active = request.data['data']['isActive']
+        album.name = request.data['data']['name']
+        album.save()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
-      album = Album.objects.get(id=request.data['item']['id'])
-      album.is_active = request.data['data']['isActive']
-      album.name = request.data['data']['name']
-      album.save()
-      return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
     def useralbum(self, request):
