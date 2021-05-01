@@ -92,6 +92,16 @@ class UserViewSet(viewsets.ModelViewSet):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['GET', 'POST'])
+    def modify_is_not_premium(self, request):
+        if request.method == 'POST':
+            user = User.objects.get(id=request.data['user_id'])
+            user.is_active = request.data['item']['isActive']
+            user.save()
+            return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+        queryset = self.get_queryset().filter(is_staff=False)
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class PremiumViewSet(viewsets.ModelViewSet):
