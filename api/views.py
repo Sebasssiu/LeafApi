@@ -95,7 +95,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET', 'POST'])
     def modify_is_not_premium(self, request):
         if request.method == 'POST':
-            user = User.objects.get(id=request.data['user_id'])
+            user = User.objects.get(id=request.data['item']['user_id'])
             user.is_active = request.data['item']['isActive']
             user.save()
             return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
