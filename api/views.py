@@ -103,6 +103,16 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['GET', 'POST'])
+    def deactivate_premium(self, request):
+        if request.method == 'POST':
+            user = User.objects.get(id=request.data['item']['id'])
+            user.is_staff = request.data['data']['isStaff']
+            user.save()
+            return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+        queryset = self.get_queryset().filter(is_staff=True)
+        serializer = UserSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
