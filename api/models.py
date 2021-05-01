@@ -1,5 +1,5 @@
 from django.db import models
-
+import pghistory
 # Create your models here.
 
 from django.contrib.auth.models import AbstractUser

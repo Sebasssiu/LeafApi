@@ -56,13 +56,16 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def modifyUser(self, request):
-      if request.data['data']['delete']:
-        User.objects.get(id=request.data['item']['id']).delete()
+        raw_query = f"SET SESSION {}"
+        cursor = connection.cursor()
+
+        if request.data['data']['delete']:
+            User.objects.get(id=request.data['item']['id']).delete()
+            return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+        user = User.objects.get(id=request.data['item']['id'])
+        user.artist_name = request.data['data']['name']
+        user.save()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
-      user = User.objects.get(id=request.data['item']['id'])
-      user.artist_name = request.data['data']['name']
-      user.save()
-      return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['POST'])
     def createmonitor(self, request):
