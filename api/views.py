@@ -56,7 +56,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def modifyUser(self, request):
-        user_id = request.data['item']['id']
+        user_id = request.data['modified_id']
         raw_query = f'SET SESSION "user.id" = {user_id};'
         cursor = connection.cursor()
         cursor.execute(raw_query)
