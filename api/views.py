@@ -13,7 +13,6 @@ from collections import defaultdict
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.db import connection
 
-
 User = get_user_model()
 
 
@@ -129,6 +128,7 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = UserSerializer(queryset, many=True)
         return Response(serializer.data)
 
+
 class PremiumViewSet(viewsets.ModelViewSet):
     queryset = Premium.objects.all()
     serializer_class = PremiumSerializer
@@ -153,13 +153,13 @@ class PremiumViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def suscriptionmonthly(self, request):
-      raw_query = """SELECT to_char(suscription_date, 'MM') as mes, count(*) from api_premium
+        raw_query = """SELECT to_char(suscription_date, 'MM') as mes, count(*) from api_premium
       where suscription_date >= date_trunc('month', (current_date) - interval '6 month') 
       and suscription_date < date_trunc('month', current_date+ interval '1 month')
       group by mes"""
-      cursor = connection.cursor()
-      print(cursor.execute(raw_query))
-      return Response(cursor.fetchall())
+        cursor = connection.cursor()
+        print(cursor.execute(raw_query))
+        return Response(cursor.fetchall())
 
 
 class AlbumViewSet(viewsets.ModelViewSet):
@@ -231,7 +231,6 @@ class ListenViewSet(viewsets.ModelViewSet):
         result = sorted(result.items(), key=lambda k_v: k_v[1], reverse=True)
         return Response(result)
 
-
     @action(detail=False, methods=['GET'])
     def mostactive(self, request):
         queryset = self.get_queryset().values('user').annotate(total=Count('user')).order_by('total')
@@ -271,12 +270,48 @@ class ListenViewSet(viewsets.ModelViewSet):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['POST'])
+    def weeklyListen(self, request):
+        date1 = request.data['date1']
+        date2 = request.data['date2']
+        raw_query = f"""select  date_trunc('week', date::date) AS weekly, count(*) from api_listen al
+                    where date >= {date1} and date < {date2}
+                    group by weekly order by weekly"""
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
+        result = cursor.fetchall()
+        response = {}
+        for i in range(0, len(result)):
+            response[f'Semana {i+1}'] = result[i][1]
+        return Response(response)
+
+    @action(detail=False, methods=['POST'])
+    def weeklyArtistPlays(self, request):
+        date1 = request.data['date1']
+        date2 = request.data['date2']
+        limit = request.data['limit']
+        raw_query = f"""select api_users.artist_name, count(*) from api_listen
+                    inner join api_song on api_listen.song_id = api_song.id
+                    inner join api_users on api_song.user_id = api_users.id
+                    where date >= {date1} and date < {date2}
+                    group by api_users.artist_name
+                    order by count(*) desc
+                    limit {limit}"""
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
+        result = cursor.fetchall()
+        response = {}
+        for i in range(0, len(result)):
+            response[result[i][0]] = result[i][1]
+        return Response(response)
+
 
 class AllSongViewSet(viewsets.ModelViewSet):
-  queryset = Song.objects.all()
-  serializer_class = AllSongSerializer
-  filter_backends = [SearchFilter]
-  search_fields = ['name']
+    queryset = Song.objects.all()
+    serializer_class = AllSongSerializer
+    filter_backends = [SearchFilter]
+    search_fields = ['name']
+
 
 class SongViewSet(viewsets.ModelViewSet):
     queryset = Song.objects.all()
@@ -286,15 +321,15 @@ class SongViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def modifySong(self, request):
-      if request.data['data']['delete']:
-        Song.objects.get(id=request.data['item']['id']).delete()
+        if request.data['data']['delete']:
+            Song.objects.get(id=request.data['item']['id']).delete()
+            return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
+        song = Song.objects.get(id=request.data['item']['id'])
+        song.name = request.data['data']['name']
+        song.is_active = request.data['data']['isActive']
+        song.link = request.data['data']['link']
+        song.save()
         return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
-      song = Song.objects.get(id=request.data['item']['id'])
-      song.name = request.data['data']['name']
-      song.is_active = request.data['data']['isActive']
-      song.link = request.data['data']['link']
-      song.save()
-      return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['GET'])
     def song_info(self, request, pk=None):
@@ -347,7 +382,8 @@ class SongViewSet(viewsets.ModelViewSet):
         songdate = request.data['date']
         songalbum = request.data['album']
         album = Album.objects.filter(id=songalbum)
-        Song.objects.create(name=songname, genre=genre.first(), album_id=album.first(), is_active=True, user=user, link=songlink)
+        Song.objects.create(name=songname, genre=genre.first(), album_id=album.first(), is_active=True, user=user,
+                            link=songlink)
         response = {'message': 'song created'}
         return Response(response, status=status.HTTP_200_OK)
 
@@ -370,10 +406,10 @@ class PlayListViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def addSongToPlaylist(self, request):
-      raw_query = f"INSERT INTO api_song_playlists (song_id, playlist_id) VALUES ({request.data['song_id']}, {request.data['playlist_id']})"
-      cursor = connection.cursor()
-      cursor.execute(raw_query)
-      return Response({'response': 'Successfully'})
+        raw_query = f"INSERT INTO api_song_playlists (song_id, playlist_id) VALUES ({request.data['song_id']}, {request.data['playlist_id']})"
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
+        return Response({'response': 'Successfully'})
 
     @action(detail=False, methods=['POST'])
     def updateplaylist(self, request):
@@ -407,7 +443,7 @@ class CustomAuthToken(ObtainAuthToken):
 
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,
-                                       context={'request': request})
+                                           context={'request': request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token = Token.objects.get(user=user)
