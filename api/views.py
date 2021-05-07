@@ -272,8 +272,8 @@ class ListenViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def weeklyListen(self, request):
-        date1 = request.data['date1']
-        date2 = request.data['date2']
+        date1 = request.data['date1'].replace('"', "'")
+        date2 = request.data['date2'].replace('"', "'")
         raw_query = f"""select weeklyListen({date1}, {date2})"""
         cursor = connection.cursor()
         cursor.execute(raw_query)
@@ -287,8 +287,8 @@ class ListenViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def weeklyArtistPlays(self, request):
-        date1 = request.data['date1']
-        date2 = request.data['date2']
+        date1 = request.data['date1'].replace('"', "'")
+        date2 = request.data['date2'].replace('"', "'")
         limit = request.data['limit']
         raw_query = f"""select weeklyArtistPlays({date1}, {date2}, {limit})"""
         cursor = connection.cursor()
@@ -303,8 +303,8 @@ class ListenViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def genreListen(self, request):
-        date1 = request.data['date1']
-        date2 = request.data['date2']
+        date1 = request.data['date1'].replace('"', "'")
+        date2 = request.data['date2'].replace('"', "'")
         raw_query = f"""select genreListen({date1}, {date2})"""
         cursor = connection.cursor()
         cursor.execute(raw_query)
@@ -318,7 +318,7 @@ class ListenViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def topArtistSong(self, request):
-        name = request.data['name']
+        name = request.data['name'].replace('"', "'")
         raw_query = f"""select topArtistSong({name})"""
         cursor = connection.cursor()
         cursor.execute(raw_query)
