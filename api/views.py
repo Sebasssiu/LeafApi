@@ -489,10 +489,14 @@ class CustomAuthToken(ObtainAuthToken):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token = Token.objects.get(user=user)
-        return Response({
-            'token': token.key,
-            'user_id': user.pk
-        })
+        verify_user = User.objects.get(id=token.user_id)
+        if not verify_user.is_active:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({
+                'token': token.key,
+                'user_id': user.pk
+            })
 
 
 class MonitorViewSet(viewsets.ModelViewSet):
