@@ -82,3 +82,5 @@ class History(models.Model):
     action = models.CharField(max_length=32, blank=False)
     modified = models.CharField(max_length=32, blank=False)
     users = models.ForeignKey(User, on_delete=models.CASCADE)
+    time = models.TimeField(blank=False, default=None)
+    date = models.DateField(blank=False, default=None)

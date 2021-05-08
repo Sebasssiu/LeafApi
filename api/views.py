@@ -98,6 +98,10 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET', 'POST'])
     def modify_is_not_premium(self, request):
         if request.method == 'POST':
+            user_id = request.data['modified_id']
+            raw_query = f'SET SESSION "user.id" = {user_id};'
+            cursor = connection.cursor()
+            cursor.execute(raw_query)
             user = User.objects.get(id=request.data['item']['id'])
             user.is_active = request.data['data']['isActive']
             user.save()
@@ -168,6 +172,10 @@ class AlbumViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def modifyAlbum(self, request):
+        user_id = request.data['modified_id']
+        raw_query = f'SET SESSION "user.id" = {user_id};'
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
         if request.data['data']['delete']:
             Album.objects.get(id=request.data['item']['id']).delete()
             return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
@@ -347,6 +355,10 @@ class SongViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def modifySong(self, request):
+        user_id = request.data['modified_id']
+        raw_query = f'SET SESSION "user.id" = {user_id};'
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
         if request.data['data']['delete']:
             Song.objects.get(id=request.data['item']['id']).delete()
             return Response({'response': 'Successfully'}, status=status.HTTP_200_OK)
