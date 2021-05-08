@@ -339,7 +339,7 @@ class ListenViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def topArtistSong(self, request):
-        name = request.data['name'].replace('"', "'")
+        name = "'" + request.data['name'] + "'"
         raw_query = f"""select topArtistSong({name})"""
         cursor = connection.cursor()
         cursor.execute(raw_query)
