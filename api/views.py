@@ -272,8 +272,8 @@ class ListenViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def weeklyListen(self, request):
-        date1 = str(request.data['date1']
-        date2 = str(request.data['date2']
+        date1 = request.data['date1']
+        date2 = request.data['date2']
         raw_query = f"""select weeklyListen({date1}, {date2})"""
         cursor = connection.cursor()
         cursor.execute(raw_query)
