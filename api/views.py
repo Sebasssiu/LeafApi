@@ -272,37 +272,62 @@ class ListenViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['POST'])
     def weeklyListen(self, request):
-        date1 = request.data['date1']
-        date2 = request.data['date2']
-        raw_query = f"""select  date_trunc('week', date::date) AS weekly, count(*) from api_listen al
-                    where date >= {date1} and date < {date2}
-                    group by weekly order by weekly"""
+        date1 = request.data['date1'].replace('"', "'")
+        date2 = request.data['date2'].replace('"', "'")
+        raw_query = f"""select weeklyListen({date1}, {date2})"""
         cursor = connection.cursor()
         cursor.execute(raw_query)
         result = cursor.fetchall()
         response = {}
         for i in range(0, len(result)):
-            response[f'Semana {i+1}'] = result[i][1]
+            num = result[i][0].split(',')[1]
+            num = num[:-1]
+            response[f'Semana {i+1}'] = num
         return Response(response)
 
     @action(detail=False, methods=['POST'])
     def weeklyArtistPlays(self, request):
-        date1 = request.data['date1']
-        date2 = request.data['date2']
+        date1 = request.data['date1'].replace('"', "'")
+        date2 = request.data['date2'].replace('"', "'")
         limit = request.data['limit']
-        raw_query = f"""select api_users.artist_name, count(*) from api_listen
-                    inner join api_song on api_listen.song_id = api_song.id
-                    inner join api_users on api_song.user_id = api_users.id
-                    where date >= {date1} and date < {date2}
-                    group by api_users.artist_name
-                    order by count(*) desc
-                    limit {limit}"""
+        raw_query = f"""select weeklyArtistPlays({date1}, {date2}, {limit})"""
         cursor = connection.cursor()
         cursor.execute(raw_query)
         result = cursor.fetchall()
         response = {}
         for i in range(0, len(result)):
-            response[result[i][0]] = result[i][1]
+            print(result[i][0].split(",")[0][1:])
+            print(result[i][0].split(",")[1][:-1])
+            response[result[i][0].split(",")[0][1:].replace('"', '')] = result[i][0].split(",")[1][:-1]
+        return Response(response)
+
+    @action(detail=False, methods=['POST'])
+    def genreListen(self, request):
+        date1 = request.data['date1'].replace('"', "'")
+        date2 = request.data['date2'].replace('"', "'")
+        raw_query = f"""select genreListen({date1}, {date2})"""
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
+        result = cursor.fetchall()
+        response = {}
+        for i in range(0, len(result)):
+            print(result[i][0].split(",")[0][1:])
+            print(result[i][0].split(",")[1][:-1])
+            response[result[i][0].split(",")[0][1:].replace('"', '')] = result[i][0].split(",")[1][:-1]
+        return Response(response)
+
+    @action(detail=False, methods=['POST'])
+    def topArtistSong(self, request):
+        name = request.data['name'].replace('"', "'")
+        raw_query = f"""select topArtistSong({name})"""
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
+        result = cursor.fetchall()
+        response = {}
+        for i in range(0, len(result)):
+            print(result[i][0].split(",")[0][1:])
+            print(result[i][0].split(",")[1][:-1])
+            response[result[i][0].split(",")[0][1:].replace('"', '')] = result[i][0].split(",")[1][:-1]
         return Response(response)
 
 
