@@ -12,6 +12,7 @@ router.register('songs', SongViewSet)
 router.register('playlists', PlayListViewSet)
 router.register('allSongs', AllSongViewSet)
 router.register('monitor', MonitorViewSet)
+router.register('history', HistoryViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

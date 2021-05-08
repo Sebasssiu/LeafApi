@@ -510,3 +510,8 @@ class CustomAuthToken(ObtainAuthToken):
 class MonitorViewSet(viewsets.ModelViewSet):
     queryset = Monitor.objects.all()
     serializer_class = MonitorSerializer
+
+
+class HistoryViewSet(viewsets.ModelViewSet):
+    queryset = History.objects.all()
+    serializer_class = HistorySerializer
