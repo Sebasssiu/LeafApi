@@ -513,5 +513,5 @@ class MonitorViewSet(viewsets.ModelViewSet):
 
 
 class HistoryViewSet(viewsets.ModelViewSet):
-    queryset = History.objects.all()
+    queryset = History.objects.all().order_by('-id')
     serializer_class = HistorySerializer
