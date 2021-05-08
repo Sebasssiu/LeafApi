@@ -117,6 +117,10 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET', 'POST'])
     def deactivate_premium(self, request):
         if request.method == 'POST':
+            user_id = request.data['modified_id']
+            raw_query = f'SET SESSION "user.id" = {user_id};'
+            cursor = connection.cursor()
+            cursor.execute(raw_query)
             user = User.objects.get(id=request.data['item']['id'])
             user.is_staff = request.data['data']['isStaff']
             user.save()
@@ -128,6 +132,10 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET', 'POST'])
     def deactivate_artist(self, request):
         if request.method == 'POST':
+            user_id = request.data['modified_id']
+            raw_query = f'SET SESSION "user.id" = {user_id};'
+            cursor = connection.cursor()
+            cursor.execute(raw_query)
             user = User.objects.get(id=request.data['item']['id'])
             user.is_active = request.data['data']['isActive']
             user.save()
