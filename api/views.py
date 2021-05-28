@@ -254,8 +254,8 @@ class AlbumViewSet(viewsets.ModelViewSet):
                                 is_active=True,
                                 user=user, link=song_link)
 
-        serializer = AlbumSerializer(selected_album, many=True)
-        return Response(serializer.data)
+        response = {'message': 'Simulation finished'}
+        return Response(response, status=status.HTTP_200_OK)
 
 
 class GenreViewSet(viewsets.ModelViewSet):
