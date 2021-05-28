@@ -17,6 +17,10 @@ import random
 
 User = get_user_model()
 mongo_instance = MongoInstance()
+# Mongo database
+# mongo_instance.db
+# mongo_instance.change_database('hola')
+
 
 
 class UserViewSet(viewsets.ModelViewSet):
