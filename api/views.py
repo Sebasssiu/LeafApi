@@ -227,7 +227,6 @@ class AlbumViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def simulatingsongs(self, request):
         user_id = request.data['modified_id']
-        request_date = request.data['date']
         for_range = request.data['range']
 
         raw_query = f'SET SESSION "user.id" = {user_id};'
