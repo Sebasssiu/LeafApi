@@ -13,6 +13,7 @@ from collections import defaultdict
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.db import connection
 from .mongodb import MongoInstance
+import random
 
 User = get_user_model()
 mongo_instance = MongoInstance()
@@ -225,6 +226,38 @@ class AlbumViewSet(viewsets.ModelViewSet):
         serializer = ALbumDateSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['POST'])
+    def simulatingsongs(self, request):
+        user_id = request.data['modified_id']
+        for_range = request.data['range']
+
+        raw_query = f'SET SESSION "user.id" = {user_id};'
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
+
+        song_name = "Let it be"
+        song_link = "https://www.youtube.com/embed/QDYfEBY9NM4"
+
+        all_albums = Album.objects.all()
+        listed_albums = list(all_albums)
+        genre = Genre.objects.all()
+        listed_genres = list(genre)
+
+        for i in range(0, int(for_range)):
+            random_album = random.sample(listed_albums, 9)
+            random_genre = random.sample(listed_genres, 9)
+            album_id = random_album[0].id
+            genre_id = random_genre[0].id
+            selected_album = Album.objects.filter(id=album_id)
+            selected_genre = Genre.objects.filter(id=genre_id)
+            user = User.objects.get(id=selected_album[0].user.id)
+            Song.objects.create(name=song_name, genre=selected_genre.first(), album_id=selected_album.first(),
+                                is_active=True,
+                                user=user, link=song_link)
+
+        response = {'message': 'Simulation finished'}
+        return Response(response, status=status.HTTP_200_OK)
+
 
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
@@ -352,6 +385,34 @@ class ListenViewSet(viewsets.ModelViewSet):
             print(result[i][0].split(",")[1][:-1])
             response[result[i][0].split(",")[0][1:].replace('"', '')] = result[i][0].split(",")[1][:-1]
         return Response(response)
+
+    @action(detail=False, methods=['POST'])
+    def simulatinglistens(self, request):
+        user_id = request.data['modified_id']
+        request_date = request.data['date']
+        for_range = request.data['range']
+
+        raw_query = f'SET SESSION "user.id" = {user_id};'
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
+
+        all_songs = Song.objects.all()
+        listed_songs = list(all_songs)
+        all_users = Users.objects.all()
+        listed_users = list(all_users)
+
+        for i in range(0, int(for_range)):
+            random_song = random.sample(listed_songs, 9)
+            random_user = random.sample(listed_users, 9)
+            song_id = random_song[0].id
+            userid = random_user[0].id
+            selected_song = Song.objects.filter(id=song_id)
+            selected_user = Users.objects.filter(id=userid)
+            Listen.objects.create(song=selected_song.first(), user=selected_user.first(), date=request_date)
+
+        response = {'message': 'Simulation finished'}
+        return Response(response, status=status.HTTP_200_OK)
+
 
 
 class AllSongViewSet(viewsets.ModelViewSet):
