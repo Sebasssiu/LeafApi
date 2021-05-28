@@ -12,8 +12,10 @@ from operator import itemgetter
 from collections import defaultdict
 from rest_framework.authtoken.views import ObtainAuthToken
 from django.db import connection
+from .mongodb import MongoInstance
 
 User = get_user_model()
+mongo_instance = MongoInstance()
 
 
 class UserViewSet(viewsets.ModelViewSet):
