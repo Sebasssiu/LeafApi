@@ -14,6 +14,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from django.db import connection
 from .mongodb import MongoInstance
 import random
+import pymongo
 
 User = get_user_model()
 mongo_instance = MongoInstance()
@@ -273,6 +274,72 @@ class GenreViewSet(viewsets.ModelViewSet):
 class ListenViewSet(viewsets.ModelViewSet):
     queryset = Listen.objects.all()
     serializer_class = ListenSerializer
+
+    @action(detail=False, methods=['POST'])
+    def user_listens(self, request):
+        user_listens = mongo_instance.db.user_listens
+        date = "'" + request.data['date'] + "'"
+        raw_query = f'''
+            select au.username, ag."name" , al."date", count(*) from api_listen al
+            inner join api_users au on au.id=al.user_id
+            inner join api_song as2 on al.song_id=as2.id
+            inner join api_genre ag on ag.id=as2.genre_id
+            group by au.username, ag."name", al."date"
+            having al."date" = {date}
+            order by count(*) desc;
+        '''
+        cursor = connection.cursor()
+        cursor.execute(raw_query)
+        result = cursor.fetchall()
+        for item in result:
+            date = item[2]
+            last_date = f'{date.year}-{date.month}, {date.day}'
+            user_listens.insert_one({
+                "name": item[0],
+                "genre": item[1],
+                "date": last_date,
+                "count": item[3],
+            })
+
+        return Response('success', status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def recommended(self, requests):
+        users = set([])
+        answer = {}
+        user_listens = mongo_instance.db.user_listens
+        while len(users) < 10:
+            response = user_listens.aggregate([
+                {'$sample': {'size': 10}}
+            ])
+            for record in response:
+                users.add(record['name'])
+
+        for user in users:
+            response = user_listens.aggregate([
+                {'$match': {'name': user}},
+                {"$sort": {"count": pymongo.DESCENDING}},
+                {"$limit": 1},
+            ])
+            for record in response:
+                genre = f"'{record['genre']}'"
+                raw_query = f'''
+                    select as2."name" from api_genre ag 
+                    inner join api_song as2
+                    on ag.id =as2.genre_id
+                    where ag.name={genre}
+                    ORDER BY RANDOM()
+                    LIMIT 1;
+                '''
+                cursor = connection.cursor()
+                cursor.execute(raw_query)
+                result = cursor.fetchall()
+                answer[record['name']] = {
+                    'name': record['name'],
+                    'song': result[0][0],
+                }
+        return Response(answer ,status=status.HTTP_200_OK)
+
 
     @action(detail=False, methods=['GET'])
     def getingpopular(self, request):
