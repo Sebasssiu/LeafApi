@@ -305,6 +305,7 @@ class ListenViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def recommended(self, requests):
+        contador = 0
         users = set([])
         answer = {}
         user_listens = mongo_instance.db.user_listens
@@ -321,7 +322,9 @@ class ListenViewSet(viewsets.ModelViewSet):
                 {"$sort": {"count": pymongo.DESCENDING}},
                 {"$limit": 1},
             ])
+
             for record in response:
+                contador += 1
                 genre = f"'{record['genre']}'"
                 user = f"'{record['name']}'"
                 raw_query = f'''
@@ -340,22 +343,23 @@ class ListenViewSet(viewsets.ModelViewSet):
                 cursor = connection.cursor()
                 cursor.execute(raw_query)
                 result = cursor.fetchall()
-                if result:
-                    answer[record['name']] = {
-                        'name': record['name'],
-                        'song': result[0][0],
-                    }
-                else:
-                    raw_query2 = '''select "name" from api_song
-                                    ORDER BY RANDOM()
-                                    limit 1'''
-                    cursor = connection.cursor()
-                    cursor.execute(raw_query2)
-                    result2 = cursor.fetchall()
-                    answer[record['name']] = {
-                        'name': record['name'],
-                        'song': result2[0][0],
-                    }
+                if contador <= 10:
+                    if result:
+                        answer[record['name']] = {
+                            'name': record['name'],
+                            'song': result[0][0],
+                        }
+                    else:
+                        raw_query2 = '''select "name" from api_song
+                                        ORDER BY RANDOM()
+                                        limit 1'''
+                        cursor = connection.cursor()
+                        cursor.execute(raw_query2)
+                        result2 = cursor.fetchall()
+                        answer[record['name']] = {
+                            'name': record['name'],
+                            'song': result2[0][0],
+                        }
         return Response(answer, status=status.HTTP_200_OK)
 
 
