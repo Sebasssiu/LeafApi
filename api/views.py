@@ -323,13 +323,19 @@ class ListenViewSet(viewsets.ModelViewSet):
             ])
             for record in response:
                 genre = f"'{record['genre']}'"
+                user = f"'{record['name']}'"
                 raw_query = f'''
                     select as2."name" from api_genre ag 
                     inner join api_song as2
                     on ag.id =as2.genre_id
                     where ag.name={genre}
+                    and as2.id not in (
+                        select song_id from api_listen
+                        inner join api_users on api_listen.user_id = api_users.id
+                        where api_users.username = {user}
+                    )
                     ORDER BY RANDOM()
-                    LIMIT 1;
+                    LIMIT 1
                 '''
                 cursor = connection.cursor()
                 cursor.execute(raw_query)
@@ -338,7 +344,7 @@ class ListenViewSet(viewsets.ModelViewSet):
                     'name': record['name'],
                     'song': result[0][0],
                 }
-        return Response(answer ,status=status.HTTP_200_OK)
+        return Response(answer, status=status.HTTP_200_OK)
 
 
     @action(detail=False, methods=['GET'])
