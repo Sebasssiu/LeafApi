@@ -340,10 +340,22 @@ class ListenViewSet(viewsets.ModelViewSet):
                 cursor = connection.cursor()
                 cursor.execute(raw_query)
                 result = cursor.fetchall()
-                answer[record['name']] = {
-                    'name': record['name'],
-                    'song': result[0][0],
-                }
+                if result:
+                    answer[record['name']] = {
+                        'name': record['name'],
+                        'song': result[0][0],
+                    }
+                else:
+                    raw_query2 = '''select "name" from api_song
+                                    ORDER BY RANDOM()
+                                    limit 1'''
+                    cursor = connection.cursor()
+                    cursor.execute(raw_query2)
+                    result2 = cursor.fetchall()
+                    answer[record['name']] = {
+                        'name': record['name'],
+                        'song': result2[0][0],
+                    }
         return Response(answer, status=status.HTTP_200_OK)
 
 
